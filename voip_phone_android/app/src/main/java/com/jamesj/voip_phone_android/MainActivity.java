@@ -14,13 +14,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.jamesj.voip_phone_android.signal.module.SipManager;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class MainActivity extends Fragment implements OnBackPressedListener {
+//public class MainActivity extends Fragment implements OnBackPressedListener {
+public class MainActivity extends Fragment {
 
     private final SipManager sipManager = new SipManager();
 
@@ -179,7 +179,7 @@ public class MainActivity extends Fragment implements OnBackPressedListener {
 
     ///////////////////////////////////////////////
 
-    @Override
+    /*@Override
     public void onBackButtonPressed() {
         goToMain();
     }
@@ -189,6 +189,6 @@ public class MainActivity extends Fragment implements OnBackPressedListener {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction().remove(MainActivity.this).commit();
         fragmentManager.popBackStack();
-    }
+    }*/
 
 }

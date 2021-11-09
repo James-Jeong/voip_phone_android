@@ -9,14 +9,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.service.AppInstance;
 
 import java.io.InputStream;
 
-public class OptionActivity extends Fragment implements OnBackPressedListener {
+public class OptionActivity extends Fragment {
 
     private ViewGroup rootView;
 
@@ -43,17 +42,5 @@ public class OptionActivity extends Fragment implements OnBackPressedListener {
     }
 
     ///////////////////////////////////////////////
-
-    @Override
-    public void onBackButtonPressed() {
-        goToMain();
-    }
-
-    //프래그먼트 종료
-    private void goToMain(){
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().remove(OptionActivity.this).commit();
-        fragmentManager.popBackStack();
-    }
 
 }
