@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">sip_test2</string>
+    <string name="app_name">voip_phone</string>
 
     <string name="on_button_name">ON</string>
     <string name="off_button_name">OFF</string>
