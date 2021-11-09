@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">sip_test2</string>
+
+    <string name="on_button_name">ON</string>
+    <string name="off_button_name">OFF</string>
+    <string name="exit_button_name">EXIT</string>
+    <string name="register_button_name">REGISTER</string>
+    <string name="contact_button_name">CONTACT</string>
+    <string name="call_button_name">CALL</string>
+    <string name="bye_button_name">BYE</string>
+
+    <string name="proxy_host_name_hint">proxy host name</string>
+    <string name="remote_host_name_hint">remote host name</string>
+
+</resources>

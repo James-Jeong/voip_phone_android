@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        applicationId "com.jamesj.sip_test2"
+        minSdk 24
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/javax.sip/android-jain-sip-ri
+    //implementation files('/Users/jamesj/Downloads/jain-sip-ri-1.3.0-91.jar')
+// https://mvnrepository.com/artifact/org.robolectric/android-libcore
+    //implementation 'org.robolectric:android-libcore:4.3_r2.robolectric-0'
+
+    // https://mvnrepository.com/artifact/log4j/log4j
+    implementation 'log4j:log4j:1.2.17'
+
+    implementation 'org.scijava:native-lib-loader:2.4.0'
+    implementation 'commons-net:commons-net:3.7'
+    implementation 'org.ini4j:ini4j:0.5.4'
+    implementation 'com.orhanobut:logger:2.2.0'
+
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation files('/Users/jamesj/GIT_PROJECTS/JAIN-SIP-Android/libs/android-sip-stack.jar')
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
