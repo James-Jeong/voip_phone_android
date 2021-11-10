@@ -17,15 +17,18 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.media.MediaManager;
 import com.jamesj.voip_phone_android.media.module.ResourceManager;
+import com.jamesj.voip_phone_android.service.AppInstance;
+import com.jamesj.voip_phone_android.signal.module.NonceGenerator;
 import com.jamesj.voip_phone_android.signal.module.SipManager;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 //public class MainActivity extends Fragment implements OnBackPressedListener {
 public class PhoneFragment extends Fragment {
 
-    private final SipManager sipManager = new SipManager();
+    private SipManager sipManager = null;
 
     private ViewGroup rootView;
 
@@ -50,11 +53,16 @@ public class PhoneFragment extends Fragment {
 
     ///////////////////////////////////////////////
 
+    private String callId = null;
+
+    ///////////////////////////////////////////////
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.activity_main, container, false);
 
+        sipManager = new SipManager();
         sipManager.init();
 
         onButton = rootView.findViewById(R.id.onButton); onButton.setBackgroundColor(Color.BLACK);
@@ -138,6 +146,10 @@ public class PhoneFragment extends Fragment {
             optionFragment.control(false);
         }
 
+        if (sipManager == null) {
+            sipManager = new SipManager();
+            sipManager.init();
+        }
         sipManager.start();
         //Toast.makeText(getContext(), "[ON]", Toast.LENGTH_SHORT).show();
     }
@@ -164,7 +176,10 @@ public class PhoneFragment extends Fragment {
             optionFragment.control(true);
         }
 
-        sipManager.stop();
+        if (sipManager != null) {
+            sipManager.stop();
+            sipManager = null;
+        }
         //Toast.makeText(getContext, "[OFF]", Toast.LENGTH_SHORT).show();
     }
 
@@ -187,12 +202,34 @@ public class PhoneFragment extends Fragment {
         enableButton(byeButton);
         disableButton(callButton);
 
+        callId = NonceGenerator.createRandomNonce();
+        ConfigManager configManager = AppInstance.getInstance().getConfigManager();
+        sipManager.sendInvite(
+                callId,
+                configManager.getHostName(),
+                remoteHostNameEditText.getText().toString(),
+                configManager.getToIp(),
+                configManager.getToPort()
+        );
+
         Toast.makeText(getContext(), "Call to [" + remoteHostNameEditText.getText() + "]", Toast.LENGTH_SHORT).show();
     }
 
     public void byeButtonClicked(View view) {
+        if (callId == null) {
+            return;
+        }
+
         disableButton(byeButton);
         enableButton(callButton);
+
+        ConfigManager configManager = AppInstance.getInstance().getConfigManager();
+        sipManager.sendBye(
+                callId,
+                remoteHostNameEditText.getText().toString(),
+                configManager.getToIp(),
+                configManager.getToPort()
+        );
 
         Toast.makeText(getContext(), "Bye to [" + remoteHostNameEditText.getText() + "]", Toast.LENGTH_SHORT).show();
     }

@@ -23,6 +23,8 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.jamesj.voip_phone_android.config.ConfigManager;
+import com.jamesj.voip_phone_android.media.MediaManager;
+import com.jamesj.voip_phone_android.media.module.ResourceManager;
 import com.jamesj.voip_phone_android.service.AppInstance;
 import com.jamesj.voip_phone_android.ui.AudioCodecPickerDialog;
 import com.orhanobut.logger.Logger;
@@ -97,10 +99,6 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
         this.masterFragmentActivity = masterFragmentActivity;
     }
 
-    public ViewGroup getRootView() {
-        return rootView;
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -135,6 +133,9 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             ConfigManager configManager = new ConfigManager(rootView.getContext());
             configManager.load(rootView.getContext().openFileInput("user_conf.ini"));
             AppInstance.getInstance().setConfigManager(configManager);
+
+            //MediaManager.getInstance().start();
+            ResourceManager.getInstance().initResource();
             //
 
             // AUDIO-CODEC
@@ -143,6 +144,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
 
             selectedAudioCodec = rootView.findViewById(R.id.selectedAudioCodec);
             selectedAudioCodec.setText(configManager.getPriorityAudioCodec());
+            MediaManager.getInstance().setPriorityCodec(configManager.getPriorityAudioCodec());
             //
 
             // SWITCHES
@@ -471,13 +473,16 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
 
     @Override
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-        String selctedCodecName = AUDIO_CODECS[newVal];
+        String selectedCodecName = AUDIO_CODECS[newVal];
 
-        selectedAudioCodec.setText(selctedCodecName);
+        selectedAudioCodec.setText(selectedCodecName);
 
         ConfigManager configManager = AppInstance.getInstance().getConfigManager();
-        configManager.setPriorityAudioCodec(selctedCodecName);
-        configManager.setIniValue(ConfigManager.SECTION_MEDIA, ConfigManager.FIELD_PRIORITY_CODEC, selctedCodecName);
+        configManager.setPriorityAudioCodec(selectedCodecName);
+        configManager.setIniValue(ConfigManager.SECTION_MEDIA, ConfigManager.FIELD_PRIORITY_CODEC, selectedCodecName);
+
+        MediaManager.getInstance().setPriorityCodec(selectedCodecName);
+
 
         Logger.d("AUDIO CODEC [%s] is selected. (prev=%s)", AUDIO_CODECS[newVal], AUDIO_CODECS[oldVal] );
     }

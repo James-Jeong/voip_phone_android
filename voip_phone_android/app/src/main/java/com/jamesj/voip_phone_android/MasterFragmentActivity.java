@@ -12,10 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.tabs.TabLayout;
-import com.jamesj.voip_phone_android.media.MediaManager;
-import com.jamesj.voip_phone_android.media.codec.amr.AmrManager;
-import com.jamesj.voip_phone_android.media.codec.evs.EvsManager;
-import com.jamesj.voip_phone_android.media.module.ResourceManager;
 
 public class MasterFragmentActivity extends FragmentActivity {
 
@@ -110,16 +106,14 @@ public class MasterFragmentActivity extends FragmentActivity {
         });
 
         // SERVICE
-        if (MediaManager.getInstance().getPriorityCodec().equals(MediaManager.EVS)) {
+        /*if (MediaManager.getInstance().getPriorityCodec().equals(MediaManager.EVS)) {
             EvsManager.getInstance().init();
         }
 
         if (MediaManager.getInstance().getPriorityCodec().equals(MediaManager.AMR_NB)
                 || MediaManager.getInstance().getPriorityCodec().equals(MediaManager.AMR_WB)) {
             AmrManager.getInstance().init();
-        }
-
-        ResourceManager.getInstance().initResource();
+        }*/
         //
     }
 

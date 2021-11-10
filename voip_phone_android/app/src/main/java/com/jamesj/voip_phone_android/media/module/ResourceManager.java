@@ -48,14 +48,14 @@ public class ResourceManager {
             }
         }
 
-        Logger.i("Ready to RTP port resource in Queue. (port range: %s - %s, gap=%s)",
+        Logger.d("Ready to RTP port resource in Queue. (port range: %d - %d, gap=%d)",
                 localUdpPortMin, localUdpPortMax, portGap
         );
     }
 
     public void releaseResource () {
         channelQueues.clear();
-        Logger.i("Release RTP port resource in Queue. (port range: %s - %s, gap=%s)",
+        Logger.i("Release RTP port resource in Queue. (port range: %d - %d, gap=%d)",
                 localUdpPortMin, localUdpPortMax, portGap
         );
     }
@@ -76,7 +76,7 @@ public class ResourceManager {
             Logger.w("Exception to get RTP port resource in Queue.", e);
         }
 
-        Logger.d("Success to get RTP port(=%s) resource in Queue.", port);
+        Logger.d("Success to get RTP port(=%d) resource in Queue.", port);
         return port;
     }
 
@@ -85,7 +85,7 @@ public class ResourceManager {
             try {
                 channelQueues.offer(port);
             } catch (Exception e) {
-                Logger.w("Exception to restore RTP port(=%s) resource in Queue.", port, e);
+                Logger.w("Exception to restore RTP port(=%d) resource in Queue.", port, e);
             }
         }
     }
@@ -94,7 +94,7 @@ public class ResourceManager {
         try {
             channelQueues.remove(port);
         } catch (Exception e) {
-            Logger.w("Exception to remove to RTP port(=%s) resource in Queue.", port, e);
+            Logger.w("Exception to remove to RTP port(=%d) resource in Queue.", port, e);
         }
     }
 

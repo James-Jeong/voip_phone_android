@@ -1,11 +1,12 @@
 package com.jamesj.voip_phone_android.media;
 
+import com.jamesj.voip_phone_android.media.netty.NettyChannelManager;
 import com.orhanobut.logger.Logger;
 
 public class MediaManager {
 
     private static MediaManager mediaManager = null;
-    //private final NettyChannelManager nettyChannelManager;
+    private final NettyChannelManager nettyChannelManager;
 
     private int priorityCodecId = -1;
     private int priorityDtmfCodecId = 101;
@@ -40,7 +41,7 @@ public class MediaManager {
     ////////////////////////////////////////////////////////////////////////////////
 
     public MediaManager() {
-        //nettyChannelManager = NettyChannelManager.getInstance();
+        nettyChannelManager = NettyChannelManager.getInstance();
     }
 
     public static MediaManager getInstance () {
@@ -55,7 +56,7 @@ public class MediaManager {
 
     public void start () {
         try {
-            //nettyChannelManager.start();
+            nettyChannelManager.start();
         } catch (Exception e) {
             Logger.w("Fail to start the sip stack.");
         }
@@ -63,7 +64,7 @@ public class MediaManager {
 
     public void stop () {
         try {
-            //nettyChannelManager.stop();
+            nettyChannelManager.stop();
         } catch (Exception e) {
             Logger.w("Fail to start the sip stack.");
         }

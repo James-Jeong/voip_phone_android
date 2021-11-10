@@ -439,19 +439,25 @@ public class ConfigManager {
 
             // 3-3) Attribute
             String[] curCodecAttributeList;
-            /*if (priorityAudioCodec.equals(MediaManager.ALAW)) {
-                curCodecAttributeList = alawAttributeList;
-            } else if (priorityAudioCodec.equals(MediaManager.ULAW)) {
-                curCodecAttributeList = ulawAttributeList;
-            } else*/
-                if (priorityAudioCodec.equals(MediaManager.AMR_NB)) {
-                curCodecAttributeList = amrAttributeList;
-            } else if (priorityAudioCodec.equals(MediaManager.AMR_WB)) {
-                curCodecAttributeList = amrWbAttributeList;
-            } else if (priorityAudioCodec.equals(MediaManager.EVS)) {
-                curCodecAttributeList = evsAttributeList;
-            } else {
-                return null;
+            switch (priorityAudioCodec) {
+                case MediaManager.ALAW:
+                    curCodecAttributeList = alawAttributeList;
+                    break;
+                case MediaManager.ULAW:
+                    curCodecAttributeList = ulawAttributeList;
+                    break;
+                case MediaManager.AMR_NB:
+                    curCodecAttributeList = amrAttributeList;
+                    break;
+                case MediaManager.AMR_WB:
+                    curCodecAttributeList = amrWbAttributeList;
+                    break;
+                case MediaManager.EVS:
+                    curCodecAttributeList = evsAttributeList;
+                    break;
+                default:
+                    Logger.w("Fail to get the priority audio codec.");
+                    return null;
             }
 
             for (String attribute : curCodecAttributeList) {

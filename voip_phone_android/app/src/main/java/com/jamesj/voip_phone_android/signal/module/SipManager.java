@@ -554,8 +554,14 @@ public class SipManager implements SipListener {
             }
 
             ClientTransaction clientTransaction = sipProvider.getNewClientTransaction(request);
-            clientTransaction.sendRequest();
-            Logger.d("REGISTER Request sent. (request=%s)", request);
+            new Thread(() -> {
+                try {
+                    clientTransaction.sendRequest();
+                    Logger.d("REGISTER Request sent. (request=%s)", request);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
         catch ( Exception e ) {
             Logger.w("REGISTER Request sent failed.", e);
@@ -793,14 +799,24 @@ public class SipManager implements SipListener {
 
             ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader("application", "sdp");
             Sdp localSdp = configManager.loadSdpConfig("LOCAL");
+            if (localSdp == null) {
+                return;
+            }
+
             localSdp.setMediaPort(Sdp.AUDIO, listenPort);
             byte[] contents = localSdp.getData(false).getBytes();
             request.setContent(contents, contentTypeHeader);
 
             // Create new client transaction & send the invite request
             ClientTransaction clientTransaction = sipProvider.getNewClientTransaction(request);
-            clientTransaction.sendRequest();
-            Logger.d("INVITE Request sent. (request=%s)", request);
+            new Thread(() -> {
+                try {
+                    clientTransaction.sendRequest();
+                    Logger.d("INVITE Request sent. (request=%s)", request);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
 
             // Set dialog option
             Dialog dialog = clientTransaction.getDialog();
@@ -831,6 +847,7 @@ public class SipManager implements SipListener {
         }
         catch ( Exception e ) {
             Logger.w("INVITE Request sent failed.", e);
+            e.printStackTrace();
         }
     }
 
@@ -1248,9 +1265,14 @@ public class SipManager implements SipListener {
             request.addHeader(reasonHeader);
 
             CallManager.getInstance().deleteCallInfo(callId);
-
-            sipProvider.sendRequest(request);
-            Logger.d("CANCEL Request sent. (request=%s)", request);
+            new Thread(() -> {
+                try {
+                    sipProvider.sendRequest(request);
+                    Logger.d("CANCEL Request sent. (request=%s)", request);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
 
             ConfigManager configManager = AppInstance.getInstance().getConfigManager();
             if (configManager.isProxyMode()) {
@@ -1426,7 +1448,14 @@ public class SipManager implements SipListener {
             request.addHeader(contactHeader);
 
             ClientTransaction clientTransaction = sipProvider.getNewClientTransaction(request);
-            clientTransaction.sendRequest();
+            new Thread(() -> {
+                try {
+                    clientTransaction.sendRequest();
+                    Logger.d("BYE Request sent. (request=%s)", request);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
 
             ConfigManager configManager = AppInstance.getInstance().getConfigManager();
             if (configManager.isProxyMode()) {
