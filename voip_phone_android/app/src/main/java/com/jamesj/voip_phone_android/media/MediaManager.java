@@ -13,8 +13,8 @@ public class MediaManager {
     private String priorityCodecSamplingRate = null;
 
     // AUDIO
-    //public static final String ALAW = AudioFormat.Encoding.ALAW.toString();
-    //public static final String ULAW = AudioFormat.Encoding.ULAW.toString();
+    public static final String ALAW = "ALAW";
+    public static final String ULAW = "ULAW";
     public static final String EVS = "EVS";
     public static final String AMR_NB = "AMR";
     public static final String AMR_WB = "AMR-WB";
@@ -23,8 +23,8 @@ public class MediaManager {
     public static final int AMR_WB_MAX_MODE_SET = 8;
 
     private final String[] supportedAudioCodecList = {
-            //ALAW,
-            //ULAW,
+            ALAW,
+            ULAW,
             EVS,
             AMR_NB,
             AMR_WB,
@@ -101,14 +101,13 @@ public class MediaManager {
 
         if (priorityCodec != null) {
             for (String codec : supportedAudioCodecList) {
-                /*if (priorityCodec.equals(codec) && codec.equals(MediaManager.ALAW)) {
+                if (priorityCodec.equals(codec) && codec.equals(MediaManager.ALAW)) {
                     priorityCodecId = 8;
                     priorityCodecSamplingRate = "8000";
                 } else if (priorityCodec.equals(codec) && codec.equals(MediaManager.ULAW)) {
                     priorityCodecId = 0;
                     priorityCodecSamplingRate = "8000";
-                } else */
-                    if (priorityCodec.equals(codec) && codec.equals(MediaManager.EVS)) {
+                } else if (priorityCodec.equals(codec) && codec.equals(MediaManager.EVS)) {
                     priorityCodecId = 98;
                     priorityCodecSamplingRate = "8000";
                 } else if (priorityCodec.equals(codec) && codec.equals(MediaManager.AMR_NB)) {

@@ -46,6 +46,10 @@ import android.javax.sip.message.Response;
 
 import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.media.MediaManager;
+import com.jamesj.voip_phone_android.media.mix.AudioMixManager;
+import com.jamesj.voip_phone_android.media.module.TaskManager;
+import com.jamesj.voip_phone_android.media.netty.NettyChannelManager;
+import com.jamesj.voip_phone_android.media.netty.module.NettyChannel;
 import com.jamesj.voip_phone_android.media.sdp.SdpParser;
 import com.jamesj.voip_phone_android.media.sdp.base.Sdp;
 import com.jamesj.voip_phone_android.media.sdp.base.attribute.RtpAttribute;
@@ -55,6 +59,7 @@ import com.jamesj.voip_phone_android.signal.base.RegiInfo;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -172,11 +177,9 @@ public class SipManager implements SipListener {
 
             sipFactory.setPathName("android.gov.nist");
             sipStack = sipFactory.createSipStack(properties);
-            //sipStack = new SipStackImpl(properties);
         } catch (PeerUnavailableException e) {
             e.printStackTrace();
             Logger.e("%s PeerUnavailableException %s (%s) (%s)", SipLogFormatter.getCallLogHeader(null, null, null, null), e, e.getCause(), e.getStackTrace());
-            //ServiceManager.getInstance().stop();
             return;
         }
 
@@ -243,10 +246,6 @@ public class SipManager implements SipListener {
         }
 
         String uriScheme = uri.toString();
-        if (uriScheme == null) {
-            return null;
-        }
-
         String address = uriScheme.substring(uriScheme.indexOf("@") + 1);
         return address.substring(0, address.indexOf(":"));
     }
@@ -368,7 +367,7 @@ public class SipManager implements SipListener {
                     }*/
                     //
 
-                    //TaskManager.getInstance().removeTask(CallCancelHandler.class.getSimpleName() + callId);
+                    TaskManager.getInstance().removeTask(CallCancelHandler.class.getSimpleName() + callId);
                     callInfo.setIsCallStarted(false);
 
                     CallManager.getInstance().deleteCallInfo(callId);
@@ -385,7 +384,7 @@ public class SipManager implements SipListener {
                     }*/
                     //
 
-                    //TaskManager.getInstance().removeTask(CallCancelHandler.class.getSimpleName() + callId);
+                    TaskManager.getInstance().removeTask(CallCancelHandler.class.getSimpleName() + callId);
                     callInfo.setIsCallStarted(false);
                     sendAck(responseEvent);
 
@@ -740,7 +739,7 @@ public class SipManager implements SipListener {
 
             String callId = callInfo.getCallId();
 
-            /*if (configManager.isProxyMode()) {
+            if (configManager.isProxyMode()) {
                 AudioMixManager.getInstance().addAudioMixer(
                         callInfo.getSessionId(),
                         callId,
@@ -750,7 +749,7 @@ public class SipManager implements SipListener {
                         16,
                         (short) 1
                 );
-            }*/
+            }
 
             // Create the REGISTER request
             Request request = this.messageFactory.createRequest (
@@ -772,25 +771,25 @@ public class SipManager implements SipListener {
             request.addHeader(userAgentHeader);
 
             // SDP
-            int listenPort = 5060;
-            /*NettyChannel nettyChannel;
+            int listenPort;
+            NettyChannel nettyChannel;
             if (configManager.isUseClient()) {
                 NettyChannelManager.getInstance().start();
                 nettyChannel = NettyChannelManager.getInstance().getClientChannel();
                 listenPort = nettyChannel.getListenPort();
             } else {
-                //if (!configManager.isRelay()) {
-                if (NettyChannelManager.getInstance().addProxyChannel(callId)) {
-                    nettyChannel = NettyChannelManager.getInstance().getProxyChannel(callId);
-                    listenPort = nettyChannel.getListenPort();
+                if (!configManager.isRelay()) {
+                    if (NettyChannelManager.getInstance().addProxyChannel(callId)) {
+                        nettyChannel = NettyChannelManager.getInstance().getProxyChannel(callId);
+                        listenPort = nettyChannel.getListenPort();
+                    } else {
+                        Logger.w("Fail to send invite. (callId=%s)", callId);
+                        return;
+                    }
                 } else {
-                    Logger.w("Fail to send invite. (callId=%s)", callId);
-                    return;
-                }
-                *//*} else {
                     listenPort = configManager.getNettyServerPort();
-                }*//*
-            }*/
+                }
+            }
 
             ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader("application", "sdp");
             Sdp localSdp = configManager.loadSdpConfig("LOCAL");
@@ -816,10 +815,11 @@ public class SipManager implements SipListener {
             callInfo.setIsCallStarted(true);
 
             // Schedule call cancel handler
-            /*String callCancelHandlerId = CallCancelHandler.class.getSimpleName() + callId;
+            String callCancelHandlerId = CallCancelHandler.class.getSimpleName() + callId;
             TaskManager.getInstance().addTask(
                     callCancelHandlerId,
                     new CallCancelHandler(
+                            this,
                             callId,
                             toHostName,
                             toIp,
@@ -827,7 +827,7 @@ public class SipManager implements SipListener {
                             configManager.getCallRecvDuration()
                     )
             );
-            callInfo.setCallCancelHandlerId(callCancelHandlerId);*/
+            callInfo.setCallCancelHandlerId(callCancelHandlerId);
         }
         catch ( Exception e ) {
             Logger.w("INVITE Request sent failed.", e);
@@ -913,7 +913,7 @@ public class SipManager implements SipListener {
                     sipPort
             );
 
-            /*if (isProxyMode) {
+            if (isProxyMode) {
                 AudioMixManager.getInstance().addAudioMixer(
                         callInfo.getSessionId(),
                         callId,
@@ -923,7 +923,7 @@ public class SipManager implements SipListener {
                         16,
                         (short) 1
                 );
-            }*/
+            }
 
             callInfo.setFirstViaHeader(
                     headerFactory.createViaHeader(
@@ -1063,32 +1063,32 @@ public class SipManager implements SipListener {
                 return false;
             }
 
-            int listenPort = 5060;
-            /*NettyChannel nettyChannel;
+            int listenPort;
+            NettyChannel nettyChannel;
             ConfigManager configManager = AppInstance.getInstance().getConfigManager();
             if (configManager.isProxyMode()) {
-                //if (!configManager.isRelay()) {
-                if (NettyChannelManager.getInstance().addProxyChannel(callId)) {
-                    nettyChannel = NettyChannelManager.getInstance().getProxyChannel(callId);
-                    listenPort = nettyChannel.getListenPort();
+                if (!configManager.isRelay()) {
+                    if (NettyChannelManager.getInstance().addProxyChannel(callId)) {
+                        nettyChannel = NettyChannelManager.getInstance().getProxyChannel(callId);
+                        listenPort = nettyChannel.getListenPort();
+                    } else {
+                        Logger.w("(%s) Fail to send invite 200 ok.", callId);
+                        sendCancel(
+                                callId,
+                                callInfo.getFromNo(),
+                                callInfo.getFromSipIp(),
+                                callInfo.getFromSipPort()
+                        );
+                        return false;
+                    }
                 } else {
-                    Logger.w("(%s) Fail to send invite 200 ok.", callId);
-                    sendCancel(
-                            callId,
-                            callInfo.getFromNo(),
-                            callInfo.getFromSipIp(),
-                            callInfo.getFromSipPort()
-                    );
-                    return false;
-                }
-                *//*} else {
                     listenPort = configManager.getNettyServerPort();
-                }*//*
+                }
             } else {
                 NettyChannelManager.getInstance().start();
                 nettyChannel = NettyChannelManager.getInstance().getClientChannel();
                 listenPort = nettyChannel.getListenPort();
-            }*/
+            }
 
             // Send 200 OK
             Response okResponse = messageFactory.createResponse(Response.OK, callInfo.getInviteRequest());
@@ -1099,7 +1099,6 @@ public class SipManager implements SipListener {
                 SdpParser sdpParser = new SdpParser();
                 Sdp remoteSdp = sdpParser.parseSdp(callId, new String(rawSdpData));
                 //Sdp localSdp = SignalManager.getInstance().getLocalSdp();
-                ConfigManager configManager = AppInstance.getInstance().getConfigManager();
                 Sdp localSdp = configManager.loadSdpConfig("LOCAL");
                 localSdp.setMediaPort(Sdp.AUDIO, listenPort);
 
@@ -1255,11 +1254,11 @@ public class SipManager implements SipListener {
 
             ConfigManager configManager = AppInstance.getInstance().getConfigManager();
             if (configManager.isProxyMode()) {
-                //NettyChannelManager.getInstance().deleteProxyChannel(callId);
-                /*AudioMixManager.getInstance().removeAudioMixer(
+                NettyChannelManager.getInstance().deleteProxyChannel(callId);
+                AudioMixManager.getInstance().removeAudioMixer(
                         callInfo.getSessionId(),
                         callId
-                );*/
+                );
                 callInfo.setRemoteCallInfo(null);
 
                 if (callInfo.getIsRoomEntered()) {
@@ -1338,11 +1337,11 @@ public class SipManager implements SipListener {
                 }
 
                 if (configManager.isProxyMode()) {
-                    //NettyChannelManager.getInstance().deleteProxyChannel(callId);
-                    /*AudioMixManager.getInstance().removeAudioMixer(
+                    NettyChannelManager.getInstance().deleteProxyChannel(callId);
+                    AudioMixManager.getInstance().removeAudioMixer(
                             callInfo.getSessionId(),
                             callId
-                    );*/
+                    );
                     callInfo.setRemoteCallInfo(null);
 
                     if (callInfo.getIsRoomEntered()) {
@@ -1431,18 +1430,18 @@ public class SipManager implements SipListener {
 
             ConfigManager configManager = AppInstance.getInstance().getConfigManager();
             if (configManager.isProxyMode()) {
-                //NettyChannelManager.getInstance().deleteProxyChannel(callId);
-                /*AudioMixManager.getInstance().removeAudioMixer(
+                NettyChannelManager.getInstance().deleteProxyChannel(callId);
+                AudioMixManager.getInstance().removeAudioMixer(
                         callInfo.getSessionId(),
                         callId
-                );*/
+                );
                 callInfo.setRemoteCallInfo(null);
 
                 if (callInfo.getIsRoomEntered()) {
                     GroupCallManager.getInstance().deleteRoomInfo(callInfo.getSessionId(), callId);
                 }
             } else {
-                //NettyChannelManager.getInstance().stop();
+                NettyChannelManager.getInstance().stop();
                 //VoipClient.getInstance().stop();
             }
 
@@ -1494,11 +1493,11 @@ public class SipManager implements SipListener {
                 Logger.d("Recv BYE: %s", request);
 
                 if (isProxyMode) {
-                    //NettyChannelManager.getInstance().deleteProxyChannel(callId);
-                    /*AudioMixManager.getInstance().removeAudioMixer(
+                    NettyChannelManager.getInstance().deleteProxyChannel(callId);
+                    AudioMixManager.getInstance().removeAudioMixer(
                             callInfo.getSessionId(),
                             callId
-                    );*/
+                    );
                     callInfo.setRemoteCallInfo(null);
 
                     if (callInfo.getIsRoomEntered()) {
@@ -1513,7 +1512,7 @@ public class SipManager implements SipListener {
                         }
                     }
                 } else {
-                    //NettyChannelManager.getInstance().stop();
+                    NettyChannelManager.getInstance().stop();
                     //VoipClient.getInstance().stop();
                 }
 

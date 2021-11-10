@@ -17,6 +17,8 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.jamesj.voip_phone_android.media.MediaManager;
+import com.jamesj.voip_phone_android.media.module.ResourceManager;
 import com.jamesj.voip_phone_android.signal.module.SipManager;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -167,6 +169,9 @@ public class PhoneFragment extends Fragment {
     }
 
     public void exitButtonClicked(View view) {
+        MediaManager.getInstance().stop();
+        ResourceManager.getInstance().releaseResource();
+
         android.os.Process.killProcess(android.os.Process.myPid());
     }
 
