@@ -1,5 +1,49 @@
 package com.jamesj.voip_phone_android.signal.module;
 
+import android.javax.sip.ClientTransaction;
+import android.javax.sip.Dialog;
+import android.javax.sip.DialogState;
+import android.javax.sip.DialogTerminatedEvent;
+import android.javax.sip.IOExceptionEvent;
+import android.javax.sip.ListeningPoint;
+import android.javax.sip.PeerUnavailableException;
+import android.javax.sip.RequestEvent;
+import android.javax.sip.ResponseEvent;
+import android.javax.sip.ServerTransaction;
+import android.javax.sip.SipFactory;
+import android.javax.sip.SipListener;
+import android.javax.sip.SipProvider;
+import android.javax.sip.SipStack;
+import android.javax.sip.TimeoutEvent;
+import android.javax.sip.Transaction;
+import android.javax.sip.TransactionState;
+import android.javax.sip.TransactionTerminatedEvent;
+import android.javax.sip.address.Address;
+import android.javax.sip.address.AddressFactory;
+import android.javax.sip.address.SipURI;
+import android.javax.sip.address.URI;
+import android.javax.sip.header.AllowHeader;
+import android.javax.sip.header.AuthorizationHeader;
+import android.javax.sip.header.CSeqHeader;
+import android.javax.sip.header.CallIdHeader;
+import android.javax.sip.header.ContactHeader;
+import android.javax.sip.header.ContentDispositionHeader;
+import android.javax.sip.header.ContentTypeHeader;
+import android.javax.sip.header.ExpiresHeader;
+import android.javax.sip.header.FromHeader;
+import android.javax.sip.header.Header;
+import android.javax.sip.header.HeaderFactory;
+import android.javax.sip.header.MaxForwardsHeader;
+import android.javax.sip.header.ReasonHeader;
+import android.javax.sip.header.SupportedHeader;
+import android.javax.sip.header.ToHeader;
+import android.javax.sip.header.UserAgentHeader;
+import android.javax.sip.header.ViaHeader;
+import android.javax.sip.header.WWWAuthenticateHeader;
+import android.javax.sip.message.MessageFactory;
+import android.javax.sip.message.Request;
+import android.javax.sip.message.Response;
+
 import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.media.MediaManager;
 import com.jamesj.voip_phone_android.media.sdp.SdpParser;
@@ -17,50 +61,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
-
-import tavax.sip.ClientTransaction;
-import tavax.sip.Dialog;
-import tavax.sip.DialogState;
-import tavax.sip.DialogTerminatedEvent;
-import tavax.sip.IOExceptionEvent;
-import tavax.sip.ListeningPoint;
-import tavax.sip.PeerUnavailableException;
-import tavax.sip.RequestEvent;
-import tavax.sip.ResponseEvent;
-import tavax.sip.ServerTransaction;
-import tavax.sip.SipFactory;
-import tavax.sip.SipListener;
-import tavax.sip.SipProvider;
-import tavax.sip.SipStack;
-import tavax.sip.TimeoutEvent;
-import tavax.sip.Transaction;
-import tavax.sip.TransactionState;
-import tavax.sip.TransactionTerminatedEvent;
-import tavax.sip.address.Address;
-import tavax.sip.address.AddressFactory;
-import tavax.sip.address.SipURI;
-import tavax.sip.address.URI;
-import tavax.sip.header.AllowHeader;
-import tavax.sip.header.AuthorizationHeader;
-import tavax.sip.header.CSeqHeader;
-import tavax.sip.header.CallIdHeader;
-import tavax.sip.header.ContactHeader;
-import tavax.sip.header.ContentDispositionHeader;
-import tavax.sip.header.ContentTypeHeader;
-import tavax.sip.header.ExpiresHeader;
-import tavax.sip.header.FromHeader;
-import tavax.sip.header.Header;
-import tavax.sip.header.HeaderFactory;
-import tavax.sip.header.MaxForwardsHeader;
-import tavax.sip.header.ReasonHeader;
-import tavax.sip.header.SupportedHeader;
-import tavax.sip.header.ToHeader;
-import tavax.sip.header.UserAgentHeader;
-import tavax.sip.header.ViaHeader;
-import tavax.sip.header.WWWAuthenticateHeader;
-import tavax.sip.message.MessageFactory;
-import tavax.sip.message.Request;
-import tavax.sip.message.Response;
 
 public class SipManager implements SipListener {
 
@@ -158,18 +158,19 @@ public class SipManager implements SipListener {
             //String curTimeStr = timeFormat.format(curTime);
 
             Properties properties = new Properties();
-            properties.setProperty("tavax.sip.STACK_NAME", hostName);
-            //properties.setProperty("android.gov.nist.javax.sip.TRACE_LEVEL", "TRACE");
+            properties.setProperty("android.javax.sip.STACK_NAME", hostName);
+            properties.setProperty("android.gov.nist.javax.sip.TRACE_LEVEL", "LOG4J");
+            properties.setProperty("tavax.sip.LOG4J_LOGGER_NAME", "SIPStackLogger");
+
             //properties.setProperty("android.gov.nist.javax.sip.DEBUG_LOG", hostName + "_debug.log");
             //properties.setProperty("android.gov.nist.javax.sip.SERVER_LOG", hostName + "_server.log");
             //properties.setProperty("tavax.sip.TRACE_LEVEL", "LOG4J");
-            //properties.setProperty("tavax.sip.LOG4J_LOGGER_NAME", "SIPStackLogger");
 
             if (sipStack != null) {
                 sipStack.stop();
             }
 
-            sipFactory.setPathName("com.telestax");
+            sipFactory.setPathName("android.gov.nist");
             sipStack = sipFactory.createSipStack(properties);
             //sipStack = new SipStackImpl(properties);
         } catch (PeerUnavailableException e) {

@@ -1,5 +1,7 @@
 package com.jamesj.voip_phone_android.config;
 
+import android.content.Context;
+
 import com.jamesj.voip_phone_android.media.MediaManager;
 import com.jamesj.voip_phone_android.media.sdp.SdpParser;
 import com.jamesj.voip_phone_android.media.sdp.base.Sdp;
@@ -8,11 +10,11 @@ import com.orhanobut.logger.Logger;
 import org.apache.commons.net.ntp.TimeStamp;
 import org.ini4j.Ini;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.FileInputStream;
 
 public class ConfigManager {
 
+    private String configPath;
     private String contactPath;
     private Ini ini = null;
 
@@ -109,26 +111,27 @@ public class ConfigManager {
     String[] dtmf16000AttributeList;
     String[] attributeList;
 
+    private final Context context;
+
     ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * @fn public AuditConfig()
      * @brief AuditConfig 생성자 함수
      */
-    public ConfigManager() {
-        // Nothing
+    public ConfigManager(Context context) {
+        this.context = context;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    public boolean load(InputStream inputStream) {
-        if (inputStream == null) {
-            Logger.w("Not found the config stream.");
+    public boolean load(FileInputStream fileInputStream) {
+        if (fileInputStream == null) {
             return false;
         }
 
         try {
-            this.ini = new Ini(inputStream);
+            this.ini = new Ini(fileInputStream);
 
             loadCommonConfig();
             loadSignalConfig();
@@ -136,9 +139,10 @@ public class ConfigManager {
             loadRecordConfig();
             loadSdpConfig();
 
-            Logger.i("Load config [%s]", inputStream);
-        } catch (IOException e) {
+            Logger.i("Load config [%s]", fileInputStream);
+        } catch (Exception e) {
             Logger.e("ConfigManager.IOException", e);
+            e.printStackTrace();
             return false;
         }
 
@@ -506,6 +510,7 @@ public class ConfigManager {
      */
     private String getIniValue(String section, String key) {
         String value = ini.get(section,key);
+        //String value = ini.getProperty(key);
         if (value == null) {
             Logger.w("[ %s ] \" %s \" is null.", section, key);
             System.exit(1);
@@ -526,12 +531,20 @@ public class ConfigManager {
      */
     public void setIniValue(String section, String key, String value) {
         try {
-            ini.put(section, key, value);
-            ini.store();
+            /*String[] files = context.fileList();
+            for (String file : files) {
+                Logger.d("files: %s", file);
+            }*/
 
-            Logger.d("\tSet Config [%s] > [%s] : [%s]", section, key, value);
-        } catch (IOException e) {
-            Logger.w("Fail to set the config. (section=%s, field=%s, value=%s)", section, key, value);
+            ini.put(section, key, value);
+            ini.store(context.openFileOutput("user_conf.ini", Context.MODE_PRIVATE));
+
+            String newValue = ini.get(section, key);
+            //String newValue = (String) ini.get(key);
+            Logger.d("\tSet Config [%s] > [%s] : [%s]", section, key, newValue);
+        } catch (Exception e) {
+            Logger.w("Fail to set the config. (section=%s, field=%s, value=%s) (%s)", section, key, value, e);
+            e.printStackTrace();
         }
     }
 

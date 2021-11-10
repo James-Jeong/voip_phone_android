@@ -3,6 +3,7 @@ package com.jamesj.voip_phone_android;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +21,15 @@ import com.jamesj.voip_phone_android.signal.module.SipManager;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 //public class MainActivity extends Fragment implements OnBackPressedListener {
-public class MainActivity extends Fragment {
+public class PhoneFragment extends Fragment {
 
     private final SipManager sipManager = new SipManager();
 
     private ViewGroup rootView;
 
     ///////////////////////////////////////////////
+
+    private OptionFragment optionFragment = null;
 
     private Button onButton;
     private Button offButton;
@@ -51,41 +54,47 @@ public class MainActivity extends Fragment {
         rootView = (ViewGroup) inflater.inflate(R.layout.activity_main, container, false);
 
         sipManager.init();
-        sipManager.start();
 
-        onButton = (Button) rootView.findViewById(R.id.onButton); onButton.setBackgroundColor(Color.BLACK);
+        onButton = rootView.findViewById(R.id.onButton); onButton.setBackgroundColor(Color.BLACK);
         onButton.setOnClickListener(this::onButtonClicked);
 
-        offButton = (Button) rootView.findViewById(R.id.offButton); offButton.setBackgroundColor(Color.BLACK);
+        offButton = rootView.findViewById(R.id.offButton); offButton.setBackgroundColor(Color.BLACK);
         offButton.setOnClickListener(this::offButtonClicked);
 
-        exitButton = (Button) rootView.findViewById(R.id.exitButton); exitButton.setBackgroundColor(Color.BLACK);
+        exitButton = rootView.findViewById(R.id.exitButton); exitButton.setBackgroundColor(Color.BLACK);
         exitButton.setOnClickListener(this::exitButtonClicked);
 
-        registerButton = (Button) rootView.findViewById(R.id.registerButton); registerButton.setBackgroundColor(Color.BLACK);
+        registerButton = rootView.findViewById(R.id.registerButton); registerButton.setBackgroundColor(Color.BLACK);
         registerButton.setOnClickListener(this::registerButtonClicked);
 
-        contactButton = (Button) rootView.findViewById(R.id.contactButton); contactButton.setBackgroundColor(Color.BLACK);
+        contactButton = rootView.findViewById(R.id.contactButton); contactButton.setBackgroundColor(Color.BLACK);
         contactButton.setOnClickListener(this::contactButtonClicked);
 
-        callButton = (Button) rootView.findViewById(R.id.callButton); callButton.setBackgroundColor(Color.BLACK);
+        callButton = rootView.findViewById(R.id.callButton); callButton.setBackgroundColor(Color.BLACK);
         callButton.setOnClickListener(this::callButtonClicked);
 
-        byeButton = (Button) rootView.findViewById(R.id.byeButton); byeButton.setBackgroundColor(Color.BLACK);
+        byeButton = rootView.findViewById(R.id.byeButton); byeButton.setBackgroundColor(Color.BLACK);
         byeButton.setOnClickListener(this::byeButtonClicked);
 
-        proxyHostNameInputLayout = (TextInputLayout) rootView.findViewById(R.id.proxyHostNameInputLayout);
+        proxyHostNameInputLayout = rootView.findViewById(R.id.proxyHostNameInputLayout);
         proxyHostNameEditText = proxyHostNameInputLayout.getEditText();
-        remoteHostNameInputLayout = (TextInputLayout) rootView.findViewById(R.id.remoteHostNameInputLayout);
+        if (proxyHostNameEditText != null) {
+            proxyHostNameEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) } );
+        }
+
+        remoteHostNameInputLayout = rootView.findViewById(R.id.remoteHostNameInputLayout);
         remoteHostNameEditText = remoteHostNameInputLayout.getEditText();
+        if (proxyHostNameEditText != null) {
+            proxyHostNameEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) } );
+        }
 
         offButton.setBackgroundColor(Color.RED);
         offButton.setEnabled(false);
 
-        registerButton.setEnabled(false);
-        contactButton.setEnabled(false);
-        callButton.setEnabled(false);
-        byeButton.setEnabled(false);
+        disableButton(registerButton);
+        disableButton(contactButton);
+        disableButton(callButton);
+        disableButton(byeButton);
 
         proxyHostNameInputLayout.setEnabled(false);
         proxyHostNameInputLayout.setBackgroundColor(Color.GRAY);
@@ -93,6 +102,10 @@ public class MainActivity extends Fragment {
         remoteHostNameInputLayout.setBackgroundColor(Color.GRAY);
 
         return rootView;
+    }
+
+    public void setOptionActivity(OptionFragment _optionFragment) {
+        optionFragment = _optionFragment;
     }
 
     ///////////////////////////////////////////////
@@ -104,18 +117,27 @@ public class MainActivity extends Fragment {
         enableButton(offButton);
         disableButton(exitButton);
 
-        proxyHostNameInputLayout.setEnabled(true);
-        proxyHostNameInputLayout.setBackgroundColor(Color.WHITE);
-        enableButton(registerButton);
+        if (optionFragment.isClientMode()) {
+            if (optionFragment.isUseProxy()) {
+                proxyHostNameInputLayout.setEnabled(true);
+                proxyHostNameInputLayout.setBackgroundColor(Color.WHITE);
+                enableButton(registerButton);
+            }
 
-        enableButton(contactButton);
-        enableButton(callButton);
-        disableButton(byeButton);
+            enableButton(contactButton);
+            enableButton(callButton);
+            disableButton(byeButton);
 
-        remoteHostNameInputLayout.setEnabled(true);
-        remoteHostNameInputLayout.setBackgroundColor(Color.WHITE);
+            remoteHostNameInputLayout.setEnabled(true);
+            remoteHostNameInputLayout.setBackgroundColor(Color.WHITE);
+        }
 
-        //Toast.makeText(this.getApplicationContext(), "[ON]", Toast.LENGTH_SHORT).show();
+        if (optionFragment != null) {
+            optionFragment.control(false);
+        }
+
+        sipManager.start();
+        //Toast.makeText(getContext(), "[ON]", Toast.LENGTH_SHORT).show();
     }
 
     public void offButtonClicked(View view) {
@@ -136,7 +158,12 @@ public class MainActivity extends Fragment {
         remoteHostNameInputLayout.setEnabled(false);
         remoteHostNameInputLayout.setBackgroundColor(Color.GRAY);
 
-        //Toast.makeText(this.getApplicationContext(), "[OFF]", Toast.LENGTH_SHORT).show();
+        if (optionFragment != null) {
+            optionFragment.control(true);
+        }
+
+        sipManager.stop();
+        //Toast.makeText(getContext, "[OFF]", Toast.LENGTH_SHORT).show();
     }
 
     public void exitButtonClicked(View view) {
@@ -152,15 +179,15 @@ public class MainActivity extends Fragment {
     }
 
     public void callButtonClicked(View view) {
-        byeButton.setEnabled(true);
-        onButton.setEnabled(false);
+        enableButton(byeButton);
+        disableButton(callButton);
 
         Toast.makeText(getContext(), "Call to [" + remoteHostNameEditText.getText() + "]", Toast.LENGTH_SHORT).show();
     }
 
     public void byeButtonClicked(View view) {
-        byeButton.setEnabled(false);
-        onButton.setEnabled(true);
+        disableButton(byeButton);
+        enableButton(callButton);
 
         Toast.makeText(getContext(), "Bye to [" + remoteHostNameEditText.getText() + "]", Toast.LENGTH_SHORT).show();
     }

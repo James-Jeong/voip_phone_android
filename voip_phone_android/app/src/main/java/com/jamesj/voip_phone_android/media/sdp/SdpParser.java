@@ -3,6 +3,15 @@
  */
 package com.jamesj.voip_phone_android.media.sdp;
 
+import android.gov.nist.javax.sdp.SessionDescriptionImpl;
+import android.gov.nist.javax.sdp.parser.SDPAnnounceParser;
+import android.javax.sdp.Attribute;
+import android.javax.sdp.BandWidth;
+import android.javax.sdp.Connection;
+import android.javax.sdp.Media;
+import android.javax.sdp.MediaDescription;
+import android.javax.sdp.TimeDescription;
+
 import com.jamesj.voip_phone_android.media.sdp.base.Sdp;
 import com.jamesj.voip_phone_android.media.sdp.base.attribute.base.AttributeFactory;
 import com.jamesj.voip_phone_android.media.sdp.base.attribute.base.FmtpAttributeFactory;
@@ -12,18 +21,8 @@ import com.jamesj.voip_phone_android.media.sdp.base.media.MediaFactory;
 import com.jamesj.voip_phone_android.media.sdp.base.session.SessionDescriptionFactory;
 import com.jamesj.voip_phone_android.media.sdp.base.time.TimeDescriptionFactory;
 import com.orhanobut.logger.Logger;
-import com.telestax.tavax.sdp.SessionDescriptionImpl;
-import com.telestax.tavax.sdp.parser.SDPAnnounceParser;
 
 import java.util.Vector;
-
-import tavax.sdp.Attribute;
-import tavax.sdp.BandWidth;
-import tavax.sdp.Connection;
-import tavax.sdp.Media;
-import tavax.sdp.MediaDescription;
-import tavax.sdp.TimeDescription;
-
 
 public class SdpParser {
 

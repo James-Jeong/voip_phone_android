@@ -8,8 +8,22 @@
     <string name="contact_button_name">CONTACT</string>
     <string name="call_button_name">CALL</string>
     <string name="bye_button_name">BYE</string>
+    <string name="ok_button_name">OK</string>
 
     <string name="proxy_host_name_hint">proxy host name</string>
     <string name="remote_host_name_hint">remote host name</string>
+    <string name="local_host_name_hint">local host name</string>
+    <string name="from_sip_ip_hint">local sip ip</string>
+    <string name="from_sip_port_hint">local sip port</string>
+    <string name="media_ip_hint">local media sip</string>
+    <string name="media_port_hint">local media port</string>
+    <string name="record_path_hint">record path</string>
+
+    <string name="client_mode_switch_name">CLIENT-MODE</string>
+    <string name="use_proxy_switch_name">USE-PROXY</string>
+    <string name="proxy_mode_switch_name">PROXY-MODE</string>
+    <string name="auto_accept_switch_name">AUTO-ACCEPT</string>
+    <string name="dtmf_switch_name">DTMF</string>
+    <string name="send_wav_switch_name">SEND-WAV</string>
 
 </resources>

@@ -1,16 +1,16 @@
 package com.jamesj.voip_phone_android.signal.base;
 
+import android.javax.sip.ServerTransaction;
+import android.javax.sip.header.CallIdHeader;
+import android.javax.sip.header.ViaHeader;
+import android.javax.sip.message.Request;
+
 import com.jamesj.voip_phone_android.media.sdp.base.Sdp;
 import com.jamesj.voip_phone_android.signal.module.SipLogFormatter;
 import com.orhanobut.logger.Logger;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import tavax.sip.ServerTransaction;
-import tavax.sip.header.CallIdHeader;
-import tavax.sip.header.ViaHeader;
-import tavax.sip.message.Request;
 
 public class CallInfo {
     
