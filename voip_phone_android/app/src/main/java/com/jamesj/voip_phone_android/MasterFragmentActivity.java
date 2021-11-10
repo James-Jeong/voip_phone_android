@@ -55,7 +55,7 @@ public class MasterFragmentActivity extends FragmentActivity {
 
         checkPermission();
 
-        optionFragment = new OptionFragment();
+        optionFragment = new OptionFragment(this);
         phoneFragment = new PhoneFragment();
 
         getSupportFragmentManager().beginTransaction().add(R.id.container, optionFragment).commit();

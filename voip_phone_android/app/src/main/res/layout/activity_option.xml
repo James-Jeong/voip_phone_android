@@ -34,6 +34,37 @@
                 android:layout_marginBottom="10dp"
                 >
 
+                <Button
+                    android:id="@+id/audioCodecSelectButton"
+                    android:layout_width="125dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/audio_codec_select_button_name"
+                    android:textColor="@color/white"
+                    android:background="@color/black"
+                    />
+
+                <TextView
+                    android:id="@+id/selectedAudioCodec"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_marginStart="30dp"
+                    android:textColor="@color/black"
+                    android:text="@string/none"
+                    >
+                </TextView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp"
+                >
+
                 <Switch
                     android:id="@+id/clientModeSwitch"
                     android:layout_width="wrap_content"
@@ -120,7 +151,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localHostNameInputLayout"
-                    android:layout_width="300dp"
+                    android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     app:counterMaxLength="20"
@@ -140,11 +171,13 @@
 
                 <Button
                     android:id="@+id/localHostNameEnterButton"
-                    android:layout_width="50dp"
+                    android:layout_width="45dp"
                     android:layout_height="38dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/ok_button_name"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:background="@color/black"
+                    />
 
             </LinearLayout>
 
@@ -158,7 +191,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localSipIpInputLayout"
-                    android:layout_width="300dp"
+                    android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     app:counterMaxLength="15"
@@ -178,11 +211,13 @@
 
                 <Button
                     android:id="@+id/localSipIpEnterButton"
-                    android:layout_width="50dp"
+                    android:layout_width="45dp"
                     android:layout_height="38dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/ok_button_name"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:background="@color/black"
+                    />
 
             </LinearLayout>
 
@@ -196,7 +231,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localSipPortInputLayout"
-                    android:layout_width="300dp"
+                    android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     app:counterMaxLength="5"
@@ -216,11 +251,13 @@
 
                 <Button
                     android:id="@+id/localSipPortEnterButton"
-                    android:layout_width="50dp"
+                    android:layout_width="45dp"
                     android:layout_height="38dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/ok_button_name"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:background="@color/black"
+                    />
 
             </LinearLayout>
 
@@ -234,7 +271,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localMediaIpInputLayout"
-                    android:layout_width="300dp"
+                    android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     app:counterMaxLength="15"
@@ -254,11 +291,13 @@
 
                 <Button
                     android:id="@+id/localMediaIpEnterButton"
-                    android:layout_width="50dp"
+                    android:layout_width="45dp"
                     android:layout_height="38dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/ok_button_name"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:background="@color/black"
+                    />
 
             </LinearLayout>
 
@@ -272,7 +311,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localMediaPortInputLayout"
-                    android:layout_width="300dp"
+                    android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     app:counterMaxLength="5"
@@ -292,11 +331,13 @@
 
                 <Button
                     android:id="@+id/localMediaPortEnterButton"
-                    android:layout_width="50dp"
+                    android:layout_width="45dp"
                     android:layout_height="38dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/ok_button_name"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:background="@color/black"
+                    />
 
             </LinearLayout>
 
@@ -310,7 +351,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/recordPathInputLayout"
-                    android:layout_width="300dp"
+                    android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     app:counterMaxLength="100"
@@ -330,11 +371,13 @@
 
                 <Button
                     android:id="@+id/recordPathEnterButton"
-                    android:layout_width="50dp"
+                    android:layout_width="45dp"
                     android:layout_height="38dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/ok_button_name"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:background="@color/black"
+                    />
 
             </LinearLayout>
 

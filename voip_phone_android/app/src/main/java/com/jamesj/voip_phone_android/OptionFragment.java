@@ -12,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.service.AppInstance;
+import com.jamesj.voip_phone_android.ui.AudioCodecPickerDialog;
+import com.orhanobut.logger.Logger;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -31,9 +35,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-public class OptionFragment extends Fragment {
+public class OptionFragment extends Fragment implements NumberPicker.OnValueChangeListener {
 
+    private MasterFragmentActivity masterFragmentActivity;
     private ViewGroup rootView;
+
+    ///////////////////////////////////////////////
+
+    public static String[] AUDIO_CODECS = { "ALAW", "ULAW", "AMR-NB", "AMR-WB", "EVS" };
+    private Button audioCodecSelectButton;
+    private TextView selectedAudioCodec;
 
     ///////////////////////////////////////////////
 
@@ -81,6 +92,11 @@ public class OptionFragment extends Fragment {
 
     ///////////////////////////////////////////////
 
+
+    public OptionFragment(MasterFragmentActivity masterFragmentActivity) {
+        this.masterFragmentActivity = masterFragmentActivity;
+    }
+
     public ViewGroup getRootView() {
         return rootView;
     }
@@ -121,6 +137,14 @@ public class OptionFragment extends Fragment {
             AppInstance.getInstance().setConfigManager(configManager);
             //
 
+            // AUDIO-CODEC
+            audioCodecSelectButton = rootView.findViewById(R.id.audioCodecSelectButton);
+            audioCodecSelectButton.setOnClickListener(v -> showAudioCodecPicker(v, "Select audio codec", ""));
+
+            selectedAudioCodec = rootView.findViewById(R.id.selectedAudioCodec);
+            selectedAudioCodec.setText(configManager.getPriorityAudioCodec());
+            //
+
             // SWITCHES
             clientModeSwitch = rootView.findViewById(R.id.clientModeSwitch);
             useProxySwitch = rootView.findViewById(R.id.useProxySwitch);
@@ -134,6 +158,7 @@ public class OptionFragment extends Fragment {
                 clientModeSwitch.setChecked(true);
                 clientModeSwitch.setEnabled(false);
 
+                audioCodecSelectButton.setEnabled(true);
                 proxyModeSwitch.setChecked(false);
                 useProxySwitch.setEnabled(true);
                 autoAcceptSwitch.setEnabled(true);
@@ -144,6 +169,7 @@ public class OptionFragment extends Fragment {
                 proxyModeSwitch.setChecked(true);
                 proxyModeSwitch.setEnabled(false);
 
+                audioCodecSelectButton.setEnabled(false);
                 clientModeSwitch.setChecked(false);
                 useProxySwitch.setEnabled(false);
                 autoAcceptSwitch.setEnabled(false);
@@ -171,6 +197,8 @@ public class OptionFragment extends Fragment {
                     proxyModeSwitch.setTextColor(Color.BLACK);
                     proxyModeSwitch.setChecked(false);
                     proxyModeSwitch.setEnabled(true);
+
+                    audioCodecSelectButton.setEnabled(true);
                     useProxySwitch.setEnabled(true);
                     autoAcceptSwitch.setEnabled(true);
                     dtmfSwitch.setEnabled(true);
@@ -192,6 +220,8 @@ public class OptionFragment extends Fragment {
                     clientModeSwitch.setTextColor(Color.BLACK);
                     clientModeSwitch.setChecked(false);
                     clientModeSwitch.setEnabled(true);
+
+                    audioCodecSelectButton.setEnabled(false);
                     useProxySwitch.setEnabled(false);
                     autoAcceptSwitch.setEnabled(false);
                     dtmfSwitch.setEnabled(false);
@@ -321,6 +351,8 @@ public class OptionFragment extends Fragment {
             if (isClientMode()) {
                 clientModeSwitch.setEnabled(false);
                 proxyModeSwitch.setEnabled(true);
+
+                audioCodecSelectButton.setEnabled(true);
                 useProxySwitch.setEnabled(true);
                 autoAcceptSwitch.setEnabled(true);
                 dtmfSwitch.setEnabled(true);
@@ -328,6 +360,8 @@ public class OptionFragment extends Fragment {
             } else {
                 clientModeSwitch.setEnabled(true);
                 proxyModeSwitch.setEnabled(false);
+
+                audioCodecSelectButton.setEnabled(false);
                 useProxySwitch.setEnabled(false);
                 autoAcceptSwitch.setEnabled(false);
                 dtmfSwitch.setEnabled(false);
@@ -432,5 +466,34 @@ public class OptionFragment extends Fragment {
         configManager.setHostName(recordPath);
         configManager.setIniValue(ConfigManager.SECTION_RECORD, ConfigManager.FIELD_RECORD_PATH, recordPath);
     }
+
+    ///////////////////////////////////////////////
+
+    @Override
+    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+        String selctedCodecName = AUDIO_CODECS[newVal];
+
+        selectedAudioCodec.setText(selctedCodecName);
+
+        ConfigManager configManager = AppInstance.getInstance().getConfigManager();
+        configManager.setPriorityAudioCodec(selctedCodecName);
+        configManager.setIniValue(ConfigManager.SECTION_MEDIA, ConfigManager.FIELD_PRIORITY_CODEC, selctedCodecName);
+
+        Logger.d("AUDIO CODEC [%s] is selected. (prev=%s)", AUDIO_CODECS[newVal], AUDIO_CODECS[oldVal] );
+    }
+
+    public void showAudioCodecPicker(View view, String title, String subtitle){
+        AudioCodecPickerDialog audioCodecPickerDialog = new AudioCodecPickerDialog();
+
+        Bundle bundle = new Bundle(2);
+        bundle.putString("title", title);
+        bundle.putString("subtitle", subtitle);
+
+        audioCodecPickerDialog.setArguments(bundle);
+        audioCodecPickerDialog.setValueChangeListener(this);
+        audioCodecPickerDialog.show(masterFragmentActivity.getSupportFragmentManager(), "audio codec picker");
+    }
+
+    ///////////////////////////////////////////////
 
 }
