@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/button.xml" value="0.3921875" />
+        <entry key="app/src/main/res/drawable/layout_border.xml" value="0.3921875" />
+        <entry key="app/src/main/res/drawable/textview_border.xml" value="0.3921875" />
         <entry key="app/src/main/res/drawable/whie_black_button.xml" value="0.3921875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.3619791666666667" />
         <entry key="app/src/main/res/layout/activity_master.xml" value="0.37604166666666666" />

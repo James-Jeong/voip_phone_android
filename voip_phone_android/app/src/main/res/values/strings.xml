@@ -9,7 +9,7 @@
     <string name="call_button_name">CALL</string>
     <string name="bye_button_name">BYE</string>
     <string name="ok_button_name">OK</string>
-    <string name="audio_codec_select_button_name">AUDIO-CODEC</string>
+    <string name="audio_codec_select_button_name">Select codec</string>
 
     <string name="proxy_host_name_hint">proxy host name</string>
     <string name="remote_host_name_hint">remote host name</string>

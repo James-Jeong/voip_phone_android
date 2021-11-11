@@ -141,6 +141,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             // AUDIO-CODEC
             audioCodecSelectButton = rootView.findViewById(R.id.audioCodecSelectButton);
             audioCodecSelectButton.setOnClickListener(v -> showAudioCodecPicker(v, "Select audio codec", ""));
+            audioCodecSelectButton.setBackgroundColor(Color.BLACK);
 
             selectedAudioCodec = rootView.findViewById(R.id.selectedAudioCodec);
             selectedAudioCodec.setText(configManager.getPriorityAudioCodec());
@@ -196,7 +197,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
                 if (isChecked) {
                     clientModeSwitch.setTextColor(Color.MAGENTA);
                     clientModeSwitch.setEnabled(false);
-                    proxyModeSwitch.setTextColor(Color.BLACK);
+                    proxyModeSwitch.setTextColor(Color.WHITE);
                     proxyModeSwitch.setChecked(false);
                     proxyModeSwitch.setEnabled(true);
 
@@ -219,7 +220,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
                 if (isChecked) {
                     proxyModeSwitch.setTextColor(Color.MAGENTA);
                     proxyModeSwitch.setEnabled(false);
-                    clientModeSwitch.setTextColor(Color.BLACK);
+                    clientModeSwitch.setTextColor(Color.WHITE);
                     clientModeSwitch.setChecked(false);
                     clientModeSwitch.setEnabled(true);
 
@@ -284,6 +285,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             }
             localHostNameEnterButton = rootView.findViewById(R.id.localHostNameEnterButton);
             localHostNameEnterButton.setOnClickListener(this::localHostNameEnterButtonClicked);
+            localHostNameEnterButton.setBackgroundColor(Color.BLACK);
 
             fromSipIpInputLayout = rootView.findViewById(R.id.localSipIpInputLayout);
             fromSipIpEditText = fromSipIpInputLayout.getEditText();
@@ -293,6 +295,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             }
             fromSipIpEnterButton = rootView.findViewById(R.id.localSipIpEnterButton);
             fromSipIpEnterButton.setOnClickListener(this::fromSipIpEnterButtonClicked);
+            fromSipIpEnterButton.setBackgroundColor(Color.BLACK);
 
             fromSipPortInputLayout = rootView.findViewById(R.id.localSipPortInputLayout);
             fromSipPortEditText = fromSipPortInputLayout.getEditText();
@@ -302,6 +305,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             }
             fromSipPortEnterButton = rootView.findViewById(R.id.localSipPortEnterButton);
             fromSipPortEnterButton.setOnClickListener(this::fromSipPortEnterButtonClicked);
+            fromSipPortEnterButton.setBackgroundColor(Color.BLACK);
 
             mediaIpInputLayout = rootView.findViewById(R.id.localMediaIpInputLayout);
             mediaIpEditText = mediaIpInputLayout.getEditText();
@@ -311,6 +315,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             }
             mediaIpEnterButton = rootView.findViewById(R.id.localMediaIpEnterButton);
             mediaIpEnterButton.setOnClickListener(this::mediaIpEnterButtonClicked);
+            mediaIpEnterButton.setBackgroundColor(Color.BLACK);
 
             mediaPortInputLayout = rootView.findViewById(R.id.localMediaPortInputLayout);
             mediaPortEditText = mediaPortInputLayout.getEditText();
@@ -320,6 +325,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             }
             mediaPortEnterButton = rootView.findViewById(R.id.localMediaPortEnterButton);
             mediaPortEnterButton.setOnClickListener(this::mediaPortEnterButtonClicked);
+            mediaPortEnterButton.setBackgroundColor(Color.BLACK);
 
             recordPathInputLayout = rootView.findViewById(R.id.recordPathInputLayout);
             recordPathEditText = recordPathInputLayout.getEditText();
@@ -329,6 +335,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             }
             recordPathEnterButton = rootView.findViewById(R.id.recordPathEnterButton);
             recordPathEnterButton.setOnClickListener(this::recordPathEnterButtonClicked);
+            recordPathEnterButton.setBackgroundColor(Color.BLACK);
             //
 
         } catch (Exception e) {

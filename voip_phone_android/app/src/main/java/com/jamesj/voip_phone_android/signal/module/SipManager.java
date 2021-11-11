@@ -101,7 +101,7 @@ public class SipManager implements SipListener {
     // SIP Register Variables
     private final String md5PassWd = "1234";
     private String userNonce = null;
-    private String sessionId = NonceGenerator.createRandomNonce();
+    private String sessionId;
 
     ////////////////////////////////////////////////////////////////////////////////
 

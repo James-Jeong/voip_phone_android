@@ -107,9 +107,9 @@ public class PhoneFragment extends Fragment {
         disableButton(byeButton);
 
         proxyHostNameInputLayout.setEnabled(false);
-        proxyHostNameInputLayout.setBackgroundColor(Color.GRAY);
+        //proxyHostNameInputLayout.setBackgroundColor(Color.GRAY);
         remoteHostNameInputLayout.setEnabled(false);
-        remoteHostNameInputLayout.setBackgroundColor(Color.GRAY);
+        //remoteHostNameInputLayout.setBackgroundColor(Color.GRAY);
 
         return rootView;
     }
@@ -130,7 +130,7 @@ public class PhoneFragment extends Fragment {
         if (optionFragment.isClientMode()) {
             if (optionFragment.isUseProxy()) {
                 proxyHostNameInputLayout.setEnabled(true);
-                proxyHostNameInputLayout.setBackgroundColor(Color.WHITE);
+                //proxyHostNameInputLayout.setBackgroundColor(Color.WHITE);
                 enableButton(registerButton);
             }
 
@@ -139,7 +139,7 @@ public class PhoneFragment extends Fragment {
             disableButton(byeButton);
 
             remoteHostNameInputLayout.setEnabled(true);
-            remoteHostNameInputLayout.setBackgroundColor(Color.WHITE);
+            //remoteHostNameInputLayout.setBackgroundColor(Color.WHITE);
         }
 
         if (optionFragment != null) {
@@ -162,7 +162,7 @@ public class PhoneFragment extends Fragment {
         enableButton(exitButton);
 
         proxyHostNameInputLayout.setEnabled(false);
-        proxyHostNameInputLayout.setBackgroundColor(Color.GRAY);
+        //proxyHostNameInputLayout.setBackgroundColor(Color.GRAY);
         disableButton(registerButton);
 
         disableButton(contactButton);
@@ -170,7 +170,7 @@ public class PhoneFragment extends Fragment {
         disableButton(byeButton);
 
         remoteHostNameInputLayout.setEnabled(false);
-        remoteHostNameInputLayout.setBackgroundColor(Color.GRAY);
+        //remoteHostNameInputLayout.setBackgroundColor(Color.GRAY);
 
         if (optionFragment != null) {
             optionFragment.control(true);
@@ -187,7 +187,9 @@ public class PhoneFragment extends Fragment {
         MediaManager.getInstance().stop();
         ResourceManager.getInstance().releaseResource();
 
+        System.runFinalization();
         android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
     }
 
     public void registerButtonClicked(View view) {
@@ -199,6 +201,10 @@ public class PhoneFragment extends Fragment {
     }
 
     public void callButtonClicked(View view) {
+        if (remoteHostNameEditText.getText() == null || remoteHostNameEditText.getText().length() == 0) {
+            return;
+        }
+
         enableButton(byeButton);
         disableButton(callButton);
 
@@ -212,7 +218,7 @@ public class PhoneFragment extends Fragment {
                 configManager.getToPort()
         );
 
-        Toast.makeText(getContext(), "Call to [" + remoteHostNameEditText.getText() + "]", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Call to [" + remoteHostNameEditText.getText() + "] (callId=" + callId + ")", Toast.LENGTH_SHORT).show();
     }
 
     public void byeButtonClicked(View view) {
@@ -231,7 +237,7 @@ public class PhoneFragment extends Fragment {
                 configManager.getToPort()
         );
 
-        Toast.makeText(getContext(), "Bye to [" + remoteHostNameEditText.getText() + "]", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Bye to [" + remoteHostNameEditText.getText() + "] (callId=" + callId + ")", Toast.LENGTH_SHORT).show();
     }
 
     ///////////////////////////////////////////////

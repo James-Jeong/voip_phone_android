@@ -14,16 +14,17 @@
         android:orientation="vertical"
         android:gravity ="center"
         android:fillViewport="true"
-        android:layout_marginTop="0dp"
         >
 
         <LinearLayout
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="15sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:context=".OptionFragment"
             android:orientation="vertical"
             android:gravity="center_vertical"
+            android:layout_marginStart="10sp"
+            android:layout_marginEnd="10sp"
             >
 
             <LinearLayout
@@ -31,29 +32,85 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="20sp"
                 >
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/audioCodecSelectButton"
-                    android:layout_width="125dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="135sp"
+                    android:layout_height="50sp"
                     android:text="@string/audio_codec_select_button_name"
+                    android:textSize="12sp"
                     android:textColor="@color/white"
-                    android:background="@color/black"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="3sp"
                     />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/selectedAudioCodec"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100sp"
+                    android:layout_height="25sp"
                     android:textAlignment="center"
-                    android:layout_marginStart="30dp"
-                    android:textColor="@color/black"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="30sp"
+
+                    android:textColor="@color/white"
                     android:text="@string/none"
+                    android:background="@drawable/textview_border"
+                    tools:ignore="RtlCompat">
+                </com.google.android.material.textview.MaterialTextView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10sp"
+                app:strokeColor="@color/white"
+                app:strokeWidth="3sp"
+                >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/textview_border"
                     >
-                </TextView>
+
+                    <Switch
+                        android:id="@+id/clientModeSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10sp"
+                        android:layout_marginEnd="10sp"
+                        android:textSize="12sp"
+                        android:text="@string/client_mode_switch_name"
+                        tools:ignore="UseSwitchCompatOrMaterialXml">
+                    </Switch>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/textview_border"
+                    android:layout_marginStart="10sp"
+                    >
+
+                    <Switch
+                        android:id="@+id/proxyModeSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10sp"
+                        android:layout_marginEnd="10sp"
+                        android:textSize="12sp"
+                        android:text="@string/proxy_mode_switch_name"
+                        tools:ignore="UseSwitchCompatOrMaterialXml">
+                    </Switch>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -62,26 +119,47 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="10sp"
                 >
 
-                <Switch
-                    android:id="@+id/clientModeSwitch"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/client_mode_switch_name"
-                    tools:ignore="UseSwitchCompatOrMaterialXml">
-                </Switch>
+                    android:background="@drawable/textview_border"
+                    >
 
-                <Switch
-                    android:id="@+id/proxyModeSwitch"
+                    <Switch
+                        android:id="@+id/useProxySwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:layout_marginStart="10sp"
+                        android:layout_marginEnd="10sp"
+                        android:text="@string/use_proxy_switch_name"
+                        tools:ignore="UseSwitchCompatOrMaterialXml">
+                    </Switch>
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/proxy_mode_switch_name"
-                    tools:ignore="UseSwitchCompatOrMaterialXml">
-                </Switch>
+                    android:background="@drawable/textview_border"
+                    android:layout_marginStart="10sp"
+                    >
+
+                    <Switch
+                        android:id="@+id/autoAcceptSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:layout_marginStart="10sp"
+                        android:layout_marginEnd="10sp"
+                        android:text="@string/auto_accept_switch_name"
+                        tools:ignore="UseSwitchCompatOrMaterialXml">
+                    </Switch>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -90,54 +168,47 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="20sp"
                 >
 
-                <Switch
-                    android:id="@+id/useProxySwitch"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/use_proxy_switch_name"
-                    tools:ignore="UseSwitchCompatOrMaterialXml">
-                </Switch>
+                    android:background="@drawable/textview_border"
+                    >
 
-                <Switch
-                    android:id="@+id/autoAcceptSwitch"
+                    <Switch
+                        android:id="@+id/dtmfSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:layout_marginStart="10sp"
+                        android:layout_marginEnd="10sp"
+                        android:text="@string/dtmf_switch_name"
+                        tools:ignore="UseSwitchCompatOrMaterialXml">
+                    </Switch>
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/auto_accept_switch_name"
-                    tools:ignore="UseSwitchCompatOrMaterialXml">
-                </Switch>
+                    android:background="@drawable/textview_border"
+                    android:layout_marginStart="10sp"
+                    >
 
-            </LinearLayout>
+                    <Switch
+                        android:id="@+id/sendWavSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:layout_marginStart="10sp"
+                        android:layout_marginEnd="10sp"
+                        android:text="@string/send_wav_switch_name"
+                        tools:ignore="UseSwitchCompatOrMaterialXml">
+                    </Switch>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:layout_marginBottom="10dp"
-                >
-
-                <Switch
-                    android:id="@+id/dtmfSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/dtmf_switch_name"
-                    tools:ignore="UseSwitchCompatOrMaterialXml">
-                </Switch>
-
-                <Switch
-                    android:id="@+id/sendWavSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/send_wav_switch_name"
-                    tools:ignore="UseSwitchCompatOrMaterialXml">
-                </Switch>
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -146,19 +217,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5sp"
                 >
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localHostNameInputLayout"
-                    android:layout_width="260dp"
+                    android:layout_width="230sp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="10sp"
                     app:counterMaxLength="20"
                     app:counterEnabled="true"
                     android:inputType="text"
+                    android:textSize="12sp"
                     android:maxLength="20"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -166,17 +238,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/local_host_name_hint"
-                        android:minHeight="48dp" />
+                        android:textSize="12sp"
+                        android:minHeight="48sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/localHostNameEnterButton"
-                    android:layout_width="45dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="50sp"
+                    android:layout_height="50sp"
+                    android:layout_marginStart="10sp"
                     android:text="@string/ok_button_name"
+                    android:textSize="12sp"
                     android:textColor="@color/white"
-                    android:background="@color/black"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="3sp"
                     />
 
             </LinearLayout>
@@ -186,19 +261,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5sp"
                 >
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localSipIpInputLayout"
-                    android:layout_width="260dp"
+                    android:layout_width="230sp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="10sp"
                     app:counterMaxLength="15"
                     app:counterEnabled="true"
                     android:inputType="text"
+                    android:textSize="12sp"
                     android:maxLength="15"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -206,17 +282,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/from_sip_ip_hint"
-                        android:minHeight="48dp" />
+                        android:textSize="12sp"
+                        android:minHeight="48sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/localSipIpEnterButton"
-                    android:layout_width="45dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="50sp"
+                    android:layout_height="50sp"
+                    android:layout_marginStart="10sp"
                     android:text="@string/ok_button_name"
+                    android:textSize="12sp"
                     android:textColor="@color/white"
-                    android:background="@color/black"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="3sp"
                     />
 
             </LinearLayout>
@@ -226,19 +305,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5sp"
                 >
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localSipPortInputLayout"
-                    android:layout_width="260dp"
+                    android:layout_width="230sp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="10sp"
                     app:counterMaxLength="5"
                     app:counterEnabled="true"
                     android:inputType="number"
+                    android:textSize="12sp"
                     android:maxLength="5"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -246,17 +326,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/from_sip_port_hint"
-                        android:minHeight="48dp" />
+                        android:textSize="12sp"
+                        android:minHeight="48sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/localSipPortEnterButton"
-                    android:layout_width="45dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="50sp"
+                    android:layout_height="50sp"
+                    android:layout_marginStart="10sp"
                     android:text="@string/ok_button_name"
+                    android:textSize="12sp"
                     android:textColor="@color/white"
-                    android:background="@color/black"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="3sp"
                     />
 
             </LinearLayout>
@@ -266,19 +349,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5sp"
                 >
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localMediaIpInputLayout"
-                    android:layout_width="260dp"
+                    android:layout_width="230sp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="10sp"
                     app:counterMaxLength="15"
                     app:counterEnabled="true"
                     android:inputType="text"
                     android:maxLength="15"
-                    android:singleLine="true"
+                    android:textSize="12sp"
+                    android:singleLine="false"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -286,17 +370,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/media_ip_hint"
-                        android:minHeight="48dp" />
+                        android:textSize="12sp"
+                        android:minHeight="48sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/localMediaIpEnterButton"
-                    android:layout_width="45dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="50sp"
+                    android:layout_height="50sp"
+                    android:layout_marginStart="10sp"
                     android:text="@string/ok_button_name"
+                    android:textSize="12sp"
                     android:textColor="@color/white"
-                    android:background="@color/black"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="3sp"
                     />
 
             </LinearLayout>
@@ -306,19 +393,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5sp"
                 >
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/localMediaPortInputLayout"
-                    android:layout_width="260dp"
+                    android:layout_width="230sp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="10sp"
                     app:counterMaxLength="5"
                     app:counterEnabled="true"
                     android:inputType="number"
                     android:maxLength="5"
-                    android:singleLine="true"
+                    android:textSize="12sp"
+                    android:singleLine="false"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -326,17 +414,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/media_port_hint"
-                        android:minHeight="48dp" />
+                        android:textSize="12sp"
+                        android:minHeight="48sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/localMediaPortEnterButton"
-                    android:layout_width="45dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="50sp"
+                    android:layout_height="50sp"
+                    android:layout_marginStart="10sp"
                     android:text="@string/ok_button_name"
+                    android:textSize="12sp"
                     android:textColor="@color/white"
-                    android:background="@color/black"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="3sp"
                     />
 
             </LinearLayout>
@@ -346,19 +437,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5sp"
                 >
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/recordPathInputLayout"
-                    android:layout_width="260dp"
+                    android:layout_width="230sp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="10sp"
                     app:counterMaxLength="100"
                     app:counterEnabled="true"
                     android:inputType="text"
                     android:maxLength="100"
-                    android:singleLine="true"
+                    android:textSize="12sp"
+                    android:singleLine="false"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -366,17 +458,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/record_path_hint"
-                        android:minHeight="48dp" />
+                        android:textSize="12sp"
+                        android:minHeight="48sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/recordPathEnterButton"
-                    android:layout_width="45dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="50sp"
+                    android:layout_height="50sp"
+                    android:layout_marginStart="10sp"
                     android:text="@string/ok_button_name"
+                    android:textSize="12sp"
                     android:textColor="@color/white"
-                    android:background="@color/black"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="3sp"
                     />
 
             </LinearLayout>
