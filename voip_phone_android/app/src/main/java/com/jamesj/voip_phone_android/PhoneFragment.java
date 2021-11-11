@@ -1,6 +1,8 @@
 package com.jamesj.voip_phone_android;
 
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,13 +31,15 @@ import com.jamesj.voip_phone_android.signal.module.SipManager;
 //public class MainActivity extends Fragment implements OnBackPressedListener {
 public class PhoneFragment extends Fragment {
 
-    private SipManager sipManager = null;
+    ///////////////////////////////////////////////
+    // MANDATORY VARIABLES
 
+    private SipManager sipManager = null;
     private ViewGroup rootView;
+    private OptionFragment optionFragment = null;
 
     ///////////////////////////////////////////////
-
-    private OptionFragment optionFragment = null;
+    // BUTTON
 
     private Button onButton;
     private Button offButton;
@@ -45,6 +50,7 @@ public class PhoneFragment extends Fragment {
     private Button byeButton;
 
     ///////////////////////////////////////////////
+    // TEXT INPUT
 
     private TextInputLayout proxyHostNameInputLayout;
     private EditText proxyHostNameEditText;
@@ -52,8 +58,52 @@ public class PhoneFragment extends Fragment {
     private EditText remoteHostNameEditText;
 
     ///////////////////////////////////////////////
+    // CALL INFO
 
     private String callId = null;
+
+    ///////////////////////////////////////////////
+    // DTMF
+
+    private static final String[] numbers = new String[] {
+            "1", "2", "3",
+            "4", "5", "6",
+            "7", "8", "9",
+            "*", "0", "#"};
+
+    private static final int[] toneTypes = new int[]{
+            ToneGenerator.TONE_DTMF_1,
+            ToneGenerator.TONE_DTMF_2,
+            ToneGenerator.TONE_DTMF_3,
+            ToneGenerator.TONE_DTMF_4,
+            ToneGenerator.TONE_DTMF_5,
+            ToneGenerator.TONE_DTMF_6,
+            ToneGenerator.TONE_DTMF_7,
+            ToneGenerator.TONE_DTMF_8,
+            ToneGenerator.TONE_DTMF_9,
+            ToneGenerator.TONE_DTMF_S, //*
+            ToneGenerator.TONE_DTMF_0,
+            ToneGenerator.TONE_DTMF_P //#
+    };
+
+    private static int streamType = AudioManager.STREAM_MUSIC;
+    private static int volume = 70;
+    private static int durationMs = 50;
+    private static final ToneGenerator toneGenerator = new ToneGenerator(streamType, volume);
+
+    private GridLayout dtmfLayout;
+    private Button dtmf0;
+    private Button dtmf1;
+    private Button dtmf2;
+    private Button dtmf3;
+    private Button dtmf4;
+    private Button dtmf5;
+    private Button dtmf6;
+    private Button dtmf7;
+    private Button dtmf8;
+    private Button dtmf9;
+    private Button dtmfStar;
+    private Button dtmfShop;
 
     ///////////////////////////////////////////////
 
@@ -111,6 +161,48 @@ public class PhoneFragment extends Fragment {
         remoteHostNameInputLayout.setEnabled(false);
         //remoteHostNameInputLayout.setBackgroundColor(Color.GRAY);
 
+        //
+        dtmfLayout = rootView.findViewById(R.id.dtmf_layout);
+
+        dtmf1 = rootView.findViewById(R.id.dtmf_1); dtmf1.setBackgroundColor(Color.BLACK);
+        dtmf1.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[0], durationMs); });
+
+        dtmf2 = rootView.findViewById(R.id.dtmf_2); dtmf2.setBackgroundColor(Color.BLACK);
+        dtmf2.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[1], durationMs); });
+
+        dtmf3 = rootView.findViewById(R.id.dtmf_3); dtmf3.setBackgroundColor(Color.BLACK);
+        dtmf3.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[2], durationMs); });
+
+        dtmf4 = rootView.findViewById(R.id.dtmf_4); dtmf4.setBackgroundColor(Color.BLACK);
+        dtmf4.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[3], durationMs); });
+
+        dtmf5 = rootView.findViewById(R.id.dtmf_5); dtmf5.setBackgroundColor(Color.BLACK);
+        dtmf5.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[4], durationMs); });
+
+        dtmf6 = rootView.findViewById(R.id.dtmf_6); dtmf6.setBackgroundColor(Color.BLACK);
+        dtmf6.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[5], durationMs); });
+
+        dtmf7 = rootView.findViewById(R.id.dtmf_7); dtmf7.setBackgroundColor(Color.BLACK);
+        dtmf7.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[6], durationMs); });
+
+        dtmf8 = rootView.findViewById(R.id.dtmf_8); dtmf8.setBackgroundColor(Color.BLACK);
+        dtmf8.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[7], durationMs); });
+
+        dtmf9 = rootView.findViewById(R.id.dtmf_9); dtmf9.setBackgroundColor(Color.BLACK);
+        dtmf9.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[8], durationMs); });
+
+        dtmfStar = rootView.findViewById(R.id.dtmf_star); dtmfStar.setBackgroundColor(Color.BLACK);
+        dtmfStar.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[9], durationMs); });
+
+        dtmf0 = rootView.findViewById(R.id.dtmf_0); dtmf0.setBackgroundColor(Color.BLACK);
+        dtmf0.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[10], durationMs); });
+
+        dtmfShop = rootView.findViewById(R.id.dtmf_shop); dtmfShop.setBackgroundColor(Color.BLACK);
+        dtmfShop.setOnClickListener(v -> { toneGenerator.startTone(toneTypes[11], durationMs); });
+        //
+
+        disableDtmf();
+
         return rootView;
     }
 
@@ -136,6 +228,7 @@ public class PhoneFragment extends Fragment {
 
             enableButton(contactButton);
             enableButton(callButton);
+            enableDtmf();
             disableButton(byeButton);
 
             remoteHostNameInputLayout.setEnabled(true);
@@ -167,6 +260,7 @@ public class PhoneFragment extends Fragment {
 
         disableButton(contactButton);
         disableButton(callButton);
+        disableDtmf();
         disableButton(byeButton);
 
         remoteHostNameInputLayout.setEnabled(false);
@@ -241,6 +335,20 @@ public class PhoneFragment extends Fragment {
     }
 
     ///////////////////////////////////////////////
+
+    private void enableDtmf() {
+        enableButton(dtmf1); enableButton(dtmf2); enableButton(dtmf3);
+        enableButton(dtmf4); enableButton(dtmf5); enableButton(dtmf6);
+        enableButton(dtmf7); enableButton(dtmf8); enableButton(dtmf9);
+        enableButton(dtmfStar); enableButton(dtmf0); enableButton(dtmfShop);
+    }
+
+    private void disableDtmf() {
+        disableButton(dtmf1); disableButton(dtmf2); disableButton(dtmf3);
+        disableButton(dtmf4); disableButton(dtmf5); disableButton(dtmf6);
+        disableButton(dtmf7); disableButton(dtmf8); disableButton(dtmf9);
+        disableButton(dtmfStar); disableButton(dtmf0); disableButton(dtmfShop);
+    }
 
     private void enableButton(Button button) {
         button.setEnabled(true);

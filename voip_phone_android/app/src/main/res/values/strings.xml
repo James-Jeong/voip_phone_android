@@ -29,4 +29,17 @@
 
     <string name="none">none</string>
 
+    <string name="dtmf_0">0</string>
+    <string name="dtmf_1">1</string>
+    <string name="dtmf_2">2</string>
+    <string name="dtmf_3">3</string>
+    <string name="dtmf_4">4</string>
+    <string name="dtmf_5">5</string>
+    <string name="dtmf_6">6</string>
+    <string name="dtmf_7">7</string>
+    <string name="dtmf_8">8</string>
+    <string name="dtmf_9">9</string>
+    <string name="dtmf_star">*</string>
+    <string name="dtmf_shop">#</string>
+
 </resources>
