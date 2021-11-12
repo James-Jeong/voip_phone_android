@@ -36,14 +36,38 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/contact_add_button"
-                    android:layout_width="match_parent"
+                    android:layout_width="70sp"
                     android:layout_height="40sp"
                     android:text="@string/contact_add_button_name"
-                    android:textSize="11sp"
+                    android:textSize="10sp"
                     android:textColor="@color/white"
                     app:strokeColor="@color/white"
                     app:strokeWidth="3sp"
-                    />
+                    tools:ignore="SmallSp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/contact_modify_button"
+                    android:layout_width="70sp"
+                    android:layout_height="40sp"
+                    android:text="@string/contact_modify_button_name"
+                    android:textSize="10sp"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="10sp"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="3sp"
+                    tools:ignore="SmallSp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/contact_remove_button"
+                    android:layout_width="70sp"
+                    android:layout_height="40sp"
+                    android:text="@string/contact_remove_button_name"
+                    android:textSize="10sp"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="10sp"
+                    app:strokeColor="@color/white"
+                    app:strokeWidth="3sp"
+                    tools:ignore="SmallSp" />
 
             </LinearLayout>
 
@@ -57,7 +81,7 @@
 
                 <EditText
                     android:id="@+id/editText_search"
-                    android:layout_width="210sp"
+                    android:layout_width="190sp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:hint="@string/contact_mdn"
@@ -70,15 +94,15 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/contact_search_button"
-                    android:layout_width="80sp"
+                    android:layout_width="70sp"
                     android:layout_height="40sp"
                     android:text="@string/contact_search_button_name"
-                    android:textSize="11sp"
+                    android:textSize="10sp"
                     android:textColor="@color/white"
                     android:layout_marginStart="10sp"
                     app:strokeColor="@color/white"
                     app:strokeWidth="3sp"
-                    />
+                    tools:ignore="SmallSp" />
 
             </LinearLayout>
 

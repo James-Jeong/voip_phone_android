@@ -32,7 +32,6 @@ public class MasterFragmentActivity extends FragmentActivity {
 
     private long lastTimeBackPressed;
     public static final String CONTACT_ADD_KEY = "contact_add_key";
-    public static final String CONTACT_MODIFY_KEY = "contact_modify_key";
 
     ///////////////////////////////////////////////
 
@@ -41,6 +40,8 @@ public class MasterFragmentActivity extends FragmentActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         View focusView = getCurrentFocus();
         if (focusView != null) {
+
+
             Rect rect = new Rect();
             focusView.getGlobalVisibleRect(rect);
             int x = (int) ev.getX(), y = (int) ev.getY();
@@ -143,6 +144,7 @@ public class MasterFragmentActivity extends FragmentActivity {
         if (contactManagerFragment != null) {
             contactManagerFragment.finish();
         }
+        contactFragment.clearContactListView();
         getSupportFragmentManager().beginTransaction().hide(contactFragment).commit();
     }
 

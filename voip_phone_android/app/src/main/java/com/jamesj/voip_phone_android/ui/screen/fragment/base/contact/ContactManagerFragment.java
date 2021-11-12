@@ -1,5 +1,6 @@
 package com.jamesj.voip_phone_android.ui.screen.fragment.base.contact;
 
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -54,7 +55,7 @@ public class ContactManagerFragment extends Fragment {
         rootView = (ViewGroup) inflater.inflate(R.layout.add_contact_layout, container, false);
 
         saveButton = rootView.findViewById(R.id.button_save); saveButton.setBackgroundColor(Color.BLACK);
-        saveButton.setOnClickListener(this::save);
+        saveButton.setOnClickListener(this::alertToModifyContact);
         cancelButton = rootView.findViewById(R.id.button_cancel); cancelButton.setBackgroundColor(Color.BLACK);
         cancelButton.setOnClickListener(this::cancel);
 
@@ -66,6 +67,21 @@ public class ContactManagerFragment extends Fragment {
         mdnEditText = rootView.findViewById(R.id.editText_mdn);
         sipIpEditText = rootView.findViewById(R.id.editText_sip_ip);
         sipPortEditText = rootView.findViewById(R.id.editText_sip_port);
+
+        Bundle resultData = getArguments();
+        if (resultData != null) {
+            String name = resultData.getString("NAME");
+            String email = resultData.getString("EMAIL");
+            String mdn = resultData.getString("MDN");
+            String sipIp = resultData.getString("SIP_IP");
+            String sipPort = resultData.getString("SIP_PORT");
+
+            nameEditText.setText(name);
+            emailEditText.setText(email);
+            mdnEditText.setText(mdn);
+            sipIpEditText.setText(sipIp);
+            sipPortEditText.setText(sipPort);
+        }
         
         return rootView;
     }
@@ -86,6 +102,7 @@ public class ContactManagerFragment extends Fragment {
         resultBundle.putString("MDN", mdn);
         resultBundle.putString("SIP_IP", sipIp);
         resultBundle.putString("SIP_PORT", sipPort);
+        resultBundle.putBoolean("IS_MODIFIED", getArguments() != null);
 
         //Logger.d("AddContactFragment: name=[%s], email=[%s], mdn=[%s], sipIp=[%s], sipPort=[%s]", name, email, mdn, sipIp, sipPort);
         //Toast.makeText(rootView.getContext(), "name=[" + name + "]\n" + "email=[" + email + "]\n" + "mdn=[" + mdn + "]\n" + "sipIp=[" + sipIp + "]\n" + "sipPort=[" + sipPort + "]", Toast.LENGTH_SHORT).show();
@@ -93,6 +110,20 @@ public class ContactManagerFragment extends Fragment {
         getParentFragmentManager().setFragmentResult(MasterFragmentActivity.CONTACT_ADD_KEY, resultBundle);
 
         finish();
+    }
+
+    public void alertToModifyContact(View v) {
+        if (getArguments() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("정말 수정하시겠습니까?");
+            builder.setPositiveButton("예", (dialog, which) -> {
+                save(v);
+            });
+            builder.setNegativeButton("아니오", null);
+            builder.create().show();
+        } else {
+            save(v);
+        }
     }
 
     public void cancel(View v){
@@ -109,6 +140,7 @@ public class ContactManagerFragment extends Fragment {
         fragmentManager.popBackStack();
         fragmentManager.beginTransaction().show(contactFragment).commit();
         contactFragment.setContactManagerFragment(null);
+        contactFragment.clearContactListView();
     }
 
     ///////////////////////////////////////////////

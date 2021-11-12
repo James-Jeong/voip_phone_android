@@ -74,12 +74,6 @@ public class ContactListAdapter extends BaseAdapter {
         //
         Button callButton = convertView.findViewById(R.id.button_call); callButton.setBackgroundColor(Color.BLACK);
         callButton.setOnClickListener(this::call);
-
-        Button modifyContactButton = convertView.findViewById(R.id.contact_modify_button); modifyContactButton.setBackgroundColor(Color.BLACK);
-        //modifyContactButton.setOnClickListener(this::modifyContact);
-
-        Button removeContactButton = convertView.findViewById(R.id.contact_remove_button); removeContactButton.setBackgroundColor(Color.BLACK);
-        //removeContactButton.setOnClickListener(this::removeContact);
         //
 
         //
@@ -91,6 +85,15 @@ public class ContactListAdapter extends BaseAdapter {
         sipPortTextView.setText(String.valueOf(contactInfo.getSipPort()));
         //
 
+        //
+        /*CheckBox checkBox = convertView.findViewById(R.id.contact_checkbox);
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                buttonView.setChecked(false);
+            }
+        });*/
+        //
+
         //Logger.d("ContactListAdapter: contactInfo=[%s]", contactInfo);
         //Toast.makeText(context, "name=[" + contactInfo.getName() + "]\n" + "email=[" + contactInfo.getEmail() + "]\n" + "mdn=[" + contactInfo.getMdn() + "]\n" + "sipIp=[" + contactInfo.getSipIp() + "]\n" + "sipPort=[" + contactInfo.getSipPort() + "]", Toast.LENGTH_SHORT).show();
 
@@ -100,61 +103,5 @@ public class ContactListAdapter extends BaseAdapter {
     public void call(View v) {
 
     }
-
-    /*public void modifyContact(View v) {
-        int count, checked;
-        count = getCount();
-
-        if (count > 0) {
-            // 현재 선택된 아이템의 position 획득
-            checked = listView.getCheckedItemPosition();
-            if (checked > -1 && checked < count) {
-                // TODO : ContactInfo 수정
-                ContactInfo contactInfo = contactManager.getContactInfoByIndex(checked);
-                if (contactInfo == null) {
-                    Logger.w("[MODIFY CONTACT] Not found... (index=%d)", checked);
-                    return;
-                }
-
-                Bundle resultBundle = new Bundle();
-
-                String name = contactInfo.getName();
-                String email = contactInfo.getEmail();
-                String mdn = contactInfo.getMdn();
-                String sipIp = contactInfo.getSipIp();
-                String sipPort = String.valueOf(contactInfo.getSipPort());
-
-                resultBundle.putString("NAME", name);
-                resultBundle.putString("EMAIL", email);
-                resultBundle.putString("MDN", mdn);
-                resultBundle.putString("SIP_IP", sipIp);
-                resultBundle.putString("SIP_PORT", sipPort);
-
-                // listview 갱신
-                notifyDataSetChanged();
-            }
-        }
-    }
-
-    public void removeContact(View v) {
-        int count, checked;
-        count = getCount();
-
-        if (count > 0) {
-            // 현재 선택된 아이템의 position 획득
-            checked = listView.getCheckedItemPosition();
-
-            if (checked > -1 && checked < count) {
-                // TODO : ContactInfo 삭제
-
-
-                // listview 선택 초기화
-                listView.clearChoices();
-
-                // listview 갱신
-                notifyDataSetChanged();
-            }
-        }
-    }*/
 
 }

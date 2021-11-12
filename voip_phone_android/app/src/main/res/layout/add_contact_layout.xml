@@ -42,7 +42,7 @@
                 android:paddingEnd="10dp">
 
                 <TextView
-                    android:layout_width="150sp"
+                    android:layout_width="70sp"
                     android:layout_height="wrap_content"
                     android:text="@string/contact_name" />
 
@@ -56,6 +56,8 @@
                     android:autofillHints=""
                     android:maxLength="20"
                     android:singleLine="false"
+                    android:textSize="11sp"
+                    tools:ignore="SmallSp"
                     />
 
             </LinearLayout>
@@ -68,7 +70,7 @@
                 android:paddingEnd="10dp">
 
                 <TextView
-                    android:layout_width="150sp"
+                    android:layout_width="70sp"
                     android:layout_height="wrap_content"
                     android:text="@string/contact_email" />
 
@@ -82,6 +84,8 @@
                     android:autofillHints=""
                     android:maxLength="50"
                     android:singleLine="false"
+                    android:textSize="11sp"
+                    tools:ignore="SmallSp"
                     />
 
             </LinearLayout>
@@ -94,7 +98,7 @@
                 android:paddingEnd="10dp">
 
                 <TextView
-                    android:layout_width="150sp"
+                    android:layout_width="70sp"
                     android:layout_height="wrap_content"
                     android:text="@string/contact_mdn" />
 
@@ -108,6 +112,8 @@
                     android:autofillHints=""
                     android:maxLength="11"
                     android:singleLine="false"
+                    android:textSize="11sp"
+                    tools:ignore="SmallSp"
                     />
 
             </LinearLayout>
@@ -121,7 +127,7 @@
                 android:paddingEnd="10dp">
 
                 <TextView
-                    android:layout_width="150sp"
+                    android:layout_width="70sp"
                     android:layout_height="wrap_content"
                     android:text="@string/contact_sip_ip" />
 
@@ -135,6 +141,8 @@
                     android:autofillHints=""
                     android:maxLength="15"
                     android:singleLine="false"
+                    android:textSize="11sp"
+                    tools:ignore="SmallSp"
                     />
 
             </LinearLayout>
@@ -148,7 +156,7 @@
                 android:paddingEnd="10dp">
 
                 <TextView
-                    android:layout_width="150sp"
+                    android:layout_width="70sp"
                     android:layout_height="wrap_content"
                     android:text="@string/contact_sip_port" />
 
@@ -162,6 +170,8 @@
                     android:autofillHints=""
                     android:maxLength="5"
                     android:singleLine="false"
+                    android:textSize="11sp"
+                    tools:ignore="SmallSp"
                     />
 
             </LinearLayout>

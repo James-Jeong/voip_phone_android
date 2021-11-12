@@ -87,6 +87,7 @@
                     android:id="@+id/proxyHostNameInputField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:cursorVisible="false"
                     android:hint="@string/proxy_host_name_hint"
                     android:minHeight="48sp" />
             </com.google.android.material.textfield.TextInputLayout>

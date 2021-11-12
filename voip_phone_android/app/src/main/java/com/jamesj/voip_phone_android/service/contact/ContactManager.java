@@ -15,7 +15,6 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -67,6 +66,7 @@ public class ContactManager {
                             mdn,
                             sipIp,
                             sipPort,
+                            false,
                             false
                     );
                 }
@@ -103,7 +103,7 @@ public class ContactManager {
         }
     }
 
-    public ContactInfo addContactInfo(String name, String email, String mdn, String sipIp, int sipPort, boolean isFileAdd) {
+    public ContactInfo addContactInfo(String name, String email, String mdn, String sipIp, int sipPort, boolean isFileAdd, boolean isModified) {
         if (mdn == null || sipIp == null || sipPort <= 0) {
             Logger.w("Fail to add the contact info. (name=%s, email=%s, mdn=%s, sipIp=%s, sipPort=%s)", name, email, mdn, sipIp, sipPort);
             return null;
@@ -113,37 +113,54 @@ public class ContactManager {
             return null;
         }
 
-        try {
-            contactListLock.lock();
-
-            ContactInfo contactInfo = new ContactInfo(name, email, mdn, sipIp, sipPort);
-            for (ContactInfo curContactInfo : contactInfoLinkedList) {
-                if (curContactInfo != null) {
-                    if (curContactInfo.getMdn().equals(mdn)) {
-                        return null;
-                    }
-                }
-            }
-
-            if (contactInfoLinkedList.add(contactInfo)) {
-                // Add contactInfo to the contact file.
-                if (isFileAdd) {
-                    File contactFile = getContactFile();
-                    if (contactFile != null) {
-                        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(contactFile, true));
-                        bufferedWriter.append(contactInfo.toString()).append("\n");
-                        bufferedWriter.close();
-                    }
-                }
-                return contactInfo;
-            } else {
+        if (isModified) {
+            ContactInfo contactInfo = getContactInfoByMdn(mdn);
+            if (contactInfo == null) {
                 return null;
             }
-        } catch (Exception e) {
-            Logger.w("Fail to add the contact info. (name=%s, email=%s, mdn=%s, sipIp=%s, sipPort=%s)", name, email, mdn, sipIp, sipPort, e);
-            return null;
-        } finally {
-            contactListLock.unlock();
+
+            int index = getIndexByContactInfo(contactInfo);
+            if (index < 0) {
+                return null;
+            }
+
+            contactInfo = new ContactInfo(name, email, mdn, sipIp, sipPort);
+            setContactInfoByIndex(index, contactInfo);
+            reWriteContactInfoFromFile(contactInfoLinkedList);
+            return contactInfo;
+        } else {
+            try {
+                contactListLock.lock();
+
+                ContactInfo contactInfo = new ContactInfo(name, email, mdn, sipIp, sipPort);
+                for (ContactInfo curContactInfo : contactInfoLinkedList) {
+                    if (curContactInfo != null) {
+                        if (curContactInfo.getMdn().equals(mdn)) {
+                            return null;
+                        }
+                    }
+                }
+
+                if (contactInfoLinkedList.add(contactInfo)) {
+                    // Add contactInfo to the contact file.
+                    if (isFileAdd) {
+                        File contactFile = getContactFile();
+                        if (contactFile != null) {
+                            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(contactFile, true));
+                            bufferedWriter.append(contactInfo.toString()).append("\n");
+                            bufferedWriter.close();
+                        }
+                    }
+                    return contactInfo;
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                Logger.w("Fail to add the contact info. (name=%s, email=%s, mdn=%s, sipIp=%s, sipPort=%s)", name, email, mdn, sipIp, sipPort, e);
+                return null;
+            } finally {
+                contactListLock.unlock();
+            }
         }
     }
 
@@ -221,17 +238,18 @@ public class ContactManager {
         return contactInfoLinkedList.get(index);
     }
 
-    public void setContactInfoByIndex(int index, ContactInfo contactInfo) {
+    public ContactInfo setContactInfoByIndex(int index, ContactInfo contactInfo) {
         if (index < 0 || index >= contactInfoLinkedList.size() || contactInfo == null) {
-            return;
+            return null;
         }
 
         try {
             contactListLock.lock();
 
-            contactInfoLinkedList.set(index, contactInfo);
+            return contactInfoLinkedList.set(index, contactInfo);
         } catch (Exception e) {
             Logger.w("Fail to set the contact info by the mdn. (index=%s, contactInfo=%s)", index, contactInfo, e);
+            return null;
         } finally {
             contactListLock.unlock();
         }
@@ -291,7 +309,7 @@ public class ContactManager {
         return contactFile;
     }
 
-    public boolean reWriteContactInfoFromFile(LinkedHashSet<ContactInfo> dataList) {
+    public boolean reWriteContactInfoFromFile(LinkedList<ContactInfo> dataList) {
         if (dataList == null || dataList.isEmpty()) {
             return false;
         }
@@ -338,16 +356,28 @@ public class ContactManager {
         }
 
         String contactDataString = contactInfo.toString();
+        String mdn = contactInfo.getMdn();
 
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(contactFile, "rw");
             List<String> dataList = new ArrayList<>();
             String data;
 
+            int matchedCount = 0;
             while ((data = randomAccessFile.readLine()) != null) {
-                if (!data.equals(contactDataString)) {
-                    dataList.add(data);
+                String[] contactInfoArray = data.split(",");
+                for (String info : contactInfoArray) {
+                    if (info.equals(mdn)) {
+                        matchedCount++;
+                        break;
+                    }
                 }
+
+                if (matchedCount == 0) {
+                    dataList.add(data);
+                    break;
+                }
+                matchedCount = 0;
             }
 
             try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(contactFile))) {
