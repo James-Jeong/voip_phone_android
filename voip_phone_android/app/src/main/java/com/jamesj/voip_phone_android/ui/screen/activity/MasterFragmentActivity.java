@@ -1,4 +1,4 @@
-package com.jamesj.voip_phone_android;
+package com.jamesj.voip_phone_android.ui.screen.activity;
 
 import android.graphics.Rect;
 import android.os.Build;
@@ -12,6 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.tabs.TabLayout;
+import com.jamesj.voip_phone_android.R;
+import com.jamesj.voip_phone_android.ui.screen.fragment.ContactFragment;
+import com.jamesj.voip_phone_android.ui.screen.fragment.OptionFragment;
+import com.jamesj.voip_phone_android.ui.screen.fragment.PhoneFragment;
+import com.jamesj.voip_phone_android.ui.screen.fragment.base.contact.ContactManagerFragment;
 
 public class MasterFragmentActivity extends FragmentActivity {
 
@@ -21,10 +26,13 @@ public class MasterFragmentActivity extends FragmentActivity {
 
     private PhoneFragment phoneFragment;
     private OptionFragment optionFragment;
+    private ContactFragment contactFragment;
 
     ///////////////////////////////////////////////
 
     private long lastTimeBackPressed;
+    public static final String CONTACT_ADD_KEY = "contact_add_key";
+    public static final String CONTACT_MODIFY_KEY = "contact_modify_key";
 
     ///////////////////////////////////////////////
 
@@ -57,17 +65,21 @@ public class MasterFragmentActivity extends FragmentActivity {
 
         optionFragment = new OptionFragment(this);
         phoneFragment = new PhoneFragment();
+        contactFragment = new ContactFragment();
 
         getSupportFragmentManager().beginTransaction().add(R.id.container, optionFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.container, phoneFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.container, contactFragment).commit();
 
         getSupportFragmentManager().beginTransaction().show(phoneFragment).commit();
         getSupportFragmentManager().beginTransaction().hide(optionFragment).commit();
+        getSupportFragmentManager().beginTransaction().hide(contactFragment).commit();
 
         phoneFragment.setOptionActivity(optionFragment);
 
         tabLayout = findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setText("phone"));
+        tabLayout.addTab(tabLayout.newTab().setText("contact"));
         tabLayout.addTab(tabLayout.newTab().setText("option"));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -80,6 +92,8 @@ public class MasterFragmentActivity extends FragmentActivity {
                     selected = phoneFragment;
                 }
                 else if(position == 1) {
+                    selected = contactFragment;
+                } else if (position == 2) {
                     selected = optionFragment;
                 }
 
@@ -87,9 +101,16 @@ public class MasterFragmentActivity extends FragmentActivity {
                     if (selected == phoneFragment) {
                         getSupportFragmentManager().beginTransaction().show(phoneFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(optionFragment).commit();
+                        hideContactFragment();
                     } else if (selected == optionFragment) {
-                        getSupportFragmentManager().beginTransaction().show(optionFragment).commit();
                         getSupportFragmentManager().beginTransaction().hide(phoneFragment).commit();
+                        getSupportFragmentManager().beginTransaction().show(optionFragment).commit();
+                        hideContactFragment();
+                    } else if (selected == contactFragment) {
+                        getSupportFragmentManager().beginTransaction().hide(phoneFragment).commit();
+                        getSupportFragmentManager().beginTransaction().hide(optionFragment).commit();
+                        hideContactFragment();
+                        getSupportFragmentManager().beginTransaction().show(contactFragment).commit();
                     }
                 }
             }
@@ -115,6 +136,14 @@ public class MasterFragmentActivity extends FragmentActivity {
             AmrManager.getInstance().init();
         }*/
         //
+    }
+
+    private void hideContactFragment() {
+        ContactManagerFragment contactManagerFragment = contactFragment.getContactManagerFragment();
+        if (contactManagerFragment != null) {
+            contactManagerFragment.finish();
+        }
+        getSupportFragmentManager().beginTransaction().hide(contactFragment).commit();
     }
 
     private void checkPermission() {

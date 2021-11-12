@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 public class ConfigManager {
 
     private String configPath;
-    private String contactPath;
     private Ini ini = null;
 
     // Section String
@@ -780,11 +779,4 @@ public class ConfigManager {
         this.lastWavPath = lastWavPath;
     }
 
-    public String getContactPath() {
-        return contactPath;
-    }
-
-    public void setContactPath(String contactPath) {
-        this.contactPath = contactPath;
-    }
 }

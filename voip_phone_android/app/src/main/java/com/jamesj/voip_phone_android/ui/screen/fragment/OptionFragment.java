@@ -1,4 +1,4 @@
-package com.jamesj.voip_phone_android;
+package com.jamesj.voip_phone_android.ui.screen.fragment;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -22,11 +22,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.jamesj.voip_phone_android.R;
 import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.media.MediaManager;
 import com.jamesj.voip_phone_android.media.module.ResourceManager;
 import com.jamesj.voip_phone_android.service.AppInstance;
-import com.jamesj.voip_phone_android.ui.AudioCodecPickerDialog;
+import com.jamesj.voip_phone_android.ui.screen.dialog.AudioCodecPickerDialog;
+import com.jamesj.voip_phone_android.ui.screen.activity.MasterFragmentActivity;
 import com.orhanobut.logger.Logger;
 
 import java.io.BufferedReader;
@@ -39,7 +41,11 @@ import java.nio.charset.StandardCharsets;
 
 public class OptionFragment extends Fragment implements NumberPicker.OnValueChangeListener {
 
-    private MasterFragmentActivity masterFragmentActivity;
+    private static final String CONFIG_FILE_NAME = "user_conf.ini";
+
+    ///////////////////////////////////////////////
+
+    private final MasterFragmentActivity masterFragmentActivity;
     private ViewGroup rootView;
 
     ///////////////////////////////////////////////
@@ -111,13 +117,13 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
         BufferedReader bufferedReader = null;
 
         try {
-            File configFile = new File(rootView.getContext().getFilesDir() + "/user_conf.ini");
+            File configFile = new File(rootView.getContext().getFilesDir() + "/" + CONFIG_FILE_NAME);
             if (!configFile.exists() || configFile.length() == 0) {
                 // Load Config
                 AssetManager assetManager = getResources().getAssets();
-                bufferedReader = new BufferedReader(new InputStreamReader(assetManager.open("user_conf.ini"), StandardCharsets.UTF_8));
+                bufferedReader = new BufferedReader(new InputStreamReader(assetManager.open(CONFIG_FILE_NAME), StandardCharsets.UTF_8));
 
-                FileOutputStream fileOutputStream = rootView.getContext().openFileOutput("user_conf.ini", MODE_PRIVATE);
+                FileOutputStream fileOutputStream = rootView.getContext().openFileOutput(CONFIG_FILE_NAME, MODE_PRIVATE);
                 DataOutputStream dataOutputStream = new DataOutputStream(fileOutputStream);
 
                 String readLine;
@@ -131,7 +137,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             }
 
             ConfigManager configManager = new ConfigManager(rootView.getContext());
-            configManager.load(rootView.getContext().openFileInput("user_conf.ini"));
+            configManager.load(rootView.getContext().openFileInput(CONFIG_FILE_NAME));
             AppInstance.getInstance().setConfigManager(configManager);
 
             //MediaManager.getInstance().start();
@@ -424,6 +430,18 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
 
     public boolean isProxyMode() {
         return proxyModeSwitch.isChecked();
+    }
+
+    public boolean isDtmf() {
+        return dtmfSwitch.isChecked();
+    }
+
+    public boolean isSendWav() {
+        return sendWavSwitch.isChecked();
+    }
+
+    public boolean isAutoAccept() {
+        return autoAcceptSwitch.isChecked();
     }
 
     ///////////////////////////////////////////////

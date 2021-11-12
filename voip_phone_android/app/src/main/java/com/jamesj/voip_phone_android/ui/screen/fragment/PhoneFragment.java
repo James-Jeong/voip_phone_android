@@ -1,4 +1,4 @@
-package com.jamesj.voip_phone_android;
+package com.jamesj.voip_phone_android.ui.screen.fragment;
 
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.jamesj.voip_phone_android.R;
 import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.media.MediaManager;
 import com.jamesj.voip_phone_android.media.module.ResourceManager;
@@ -228,7 +229,9 @@ public class PhoneFragment extends Fragment {
 
             enableButton(contactButton);
             enableButton(callButton);
-            enableDtmf();
+            if (optionFragment.isDtmf()) {
+                enableDtmf();
+            }
             disableButton(byeButton);
 
             remoteHostNameInputLayout.setEnabled(true);

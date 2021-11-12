@@ -1,4 +1,4 @@
-package com.jamesj.voip_phone_android.ui;
+package com.jamesj.voip_phone_android.ui.base;
 
 public interface OnBackPressedListener {
 

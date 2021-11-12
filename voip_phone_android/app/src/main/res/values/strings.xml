@@ -10,6 +10,10 @@
     <string name="bye_button_name">BYE</string>
     <string name="ok_button_name">OK</string>
     <string name="audio_codec_select_button_name">Select codec</string>
+    <string name="contact_add_button_name">Add</string>
+    <string name="contact_search_button_name">Search</string>
+    <string name="contact_modify_button_name">Modify</string>
+    <string name="contact_remove_button_name">Remove</string>
 
     <string name="proxy_host_name_hint">proxy host name</string>
     <string name="remote_host_name_hint">remote host name</string>
@@ -41,5 +45,18 @@
     <string name="dtmf_9">9</string>
     <string name="dtmf_star">*</string>
     <string name="dtmf_shop">#</string>
+
+    <string name="contact_name">Name</string>
+    <string name="contact_email">Email</string>
+    <string name="contact_mdn">Mdn</string>
+    <string name="contact_sip_ip">Sip-IP</string>
+    <string name="contact_sip_port">Sip-Port</string>
+    <string name="add_contact">Add Contact</string>
+    <string name="profile_image">profile image</string>
+    <string name="default_port_number">5060</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="default_ip">127.0.0.1</string>
+    <string name="default_mdn">010-0000-0000</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.jamesj.voip_phone_android.ui;
+package com.jamesj.voip_phone_android.ui.screen.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -7,7 +7,7 @@ import android.widget.NumberPicker;
 
 import androidx.fragment.app.DialogFragment;
 
-import com.jamesj.voip_phone_android.OptionFragment;
+import com.jamesj.voip_phone_android.ui.screen.fragment.OptionFragment;
 
 public class AudioCodecPickerDialog extends DialogFragment {
 
