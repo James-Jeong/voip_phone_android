@@ -1,5 +1,9 @@
 package com.jamesj.voip_phone_android.media.module.base;
 
+import android.media.AudioAttributes;
+import android.media.AudioFormat;
+import android.media.AudioTrack;
+
 import com.jamesj.voip_phone_android.media.MediaManager;
 import com.jamesj.voip_phone_android.media.codec.amr.AmrManager;
 import com.jamesj.voip_phone_android.media.codec.evs.EvsManager;
@@ -8,6 +12,7 @@ import com.jamesj.voip_phone_android.media.codec.pcm.ULawTranscoder;
 import com.jamesj.voip_phone_android.media.dtmf.base.DtmfUnit;
 import com.jamesj.voip_phone_android.media.mix.base.AudioBuffer;
 import com.jamesj.voip_phone_android.media.mix.base.AudioFrame;
+import com.jamesj.voip_phone_android.media.module.SoundHandler;
 import com.jamesj.voip_phone_android.media.protocol.base.ConcurrentCyclicFIFO;
 import com.orhanobut.logger.Logger;
 
@@ -32,6 +37,10 @@ public class UdpReceiver extends TaskUnit {
 
     ////////////////////////////////////////////////////////////////////////////////
 
+    private final AudioTrack player;
+
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
      * @fn protected UdpReceiver(AudioBuffer audioBuffer, int interval)
      * @brief UdpReceiver 생성자 함수
@@ -42,6 +51,19 @@ public class UdpReceiver extends TaskUnit {
         super(interval);
 
         this.audioBuffer = audioBuffer;
+
+        player = new AudioTrack.Builder()
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build())
+                .setAudioFormat(new AudioFormat.Builder()
+                        .setEncoding(SoundHandler.AUDIO_FORMAT)
+                        .setSampleRate(SoundHandler.SAMPLE_RATE)
+                        .setChannelMask(SoundHandler.CHANNEL_COUNT)
+                        .build())
+                .setBufferSizeInBytes(SoundHandler.BUFFER_SIZE)
+                .build();
     }
 
     public void start() {
@@ -314,11 +336,7 @@ public class UdpReceiver extends TaskUnit {
                 }
             }
 
-            /*SourceDataLine sourceDataLine = VoipClient.getInstance().getSourceLine();
-            if (sourceDataLine != null) {
-                sourceDataLine.write(data, 0, data.length);
-                //Logger.d("RECV %s data: %s", data.length, data);
-            }*/
+            player.write(data, 0, SoundHandler.BUFFER_SIZE);
         }
     }
 

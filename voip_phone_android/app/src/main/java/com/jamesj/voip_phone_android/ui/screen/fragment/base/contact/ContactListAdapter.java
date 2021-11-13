@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.fragment.app.FragmentManager;
 
 import com.jamesj.voip_phone_android.R;
+import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.service.AppInstance;
 import com.jamesj.voip_phone_android.service.contact.ContactInfo;
 import com.jamesj.voip_phone_android.service.contact.ContactManager;
@@ -120,7 +121,13 @@ public class ContactListAdapter extends BaseAdapter {
         masterFragmentActivity.getPhoneFragment().getRemoteHostNameEditText().setText(curContactInfo.getMdn());
         //
 
-        // 2. PhoneFragment 로 화면 전환
+        // 2. ConfigManager 의 toIp, toPort 설정
+        ConfigManager configManager = AppInstance.getInstance().getConfigManager();
+        configManager.setToIp(curContactInfo.getSipIp());
+        configManager.setToPort(curContactInfo.getSipPort());
+        //
+
+        // 3. PhoneFragment 로 화면 전환
         masterFragmentActivity.getTabLayout().selectTab(
                 masterFragmentActivity.getTabLayout().getTabAt(0)
         );

@@ -6,6 +6,7 @@ import com.jamesj.voip_phone_android.media.codec.amr.AmrManager;
 import com.jamesj.voip_phone_android.media.codec.evs.EvsManager;
 import com.jamesj.voip_phone_android.media.codec.pcm.ALawTranscoder;
 import com.jamesj.voip_phone_android.media.codec.pcm.ULawTranscoder;
+import com.jamesj.voip_phone_android.media.module.AudioRecorder;
 import com.jamesj.voip_phone_android.media.netty.module.NettyChannel;
 import com.jamesj.voip_phone_android.media.protocol.base.ConcurrentCyclicFIFO;
 import com.jamesj.voip_phone_android.media.protocol.jrtp.JRtp;
@@ -49,6 +50,10 @@ public class UdpSender extends TaskUnit {
 
     ////////////////////////////////////////////////////////////////////////////////
 
+    private AudioRecorder audioRecorder = null;
+
+    ////////////////////////////////////////////////////////////////////////////////
+
     /**
      * @fn protected UdpSender(ConcurrentCyclicFIFO<byte[]> mikeBuffer, NettyChannel nettyChannel, int interval)
      * @brief UdpSender 생성자 함수
@@ -81,6 +86,11 @@ public class UdpSender extends TaskUnit {
                 Logger.d("UdpSender SendTask is added.");
             }
 
+            if (audioRecorder == null) {
+                audioRecorder = new AudioRecorder(AppInstance.getInstance().getMasterFragmentActivity());
+                audioRecorder.startRecording();
+            }
+
             switch (MediaManager.getInstance().getPriorityCodec()) {
                 case MediaManager.EVS:
                     EvsManager.getInstance().startUdpSenderTask(sendBuffer);
@@ -100,6 +110,11 @@ public class UdpSender extends TaskUnit {
     }
 
     public void stop() {
+        if (audioRecorder != null) {
+            audioRecorder.stopRecording();
+            audioRecorder = null;
+        }
+
         sendBuffer.clear();
         switch (MediaManager.getInstance().getPriorityCodec()) {
             case MediaManager.EVS:
@@ -141,7 +156,8 @@ public class UdpSender extends TaskUnit {
         //VoipClient voipClient = VoipClient.getInstance();
 
         try {
-            byte[] data = mikeBuffer.poll();
+            byte[] data = audioRecorder.read();
+            //byte[] data = mikeBuffer.poll();
             if (data == null || data.length == 0) {
                 return;
             }

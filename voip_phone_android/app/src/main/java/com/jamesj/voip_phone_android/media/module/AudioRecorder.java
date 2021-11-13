@@ -3,24 +3,13 @@ package com.jamesj.voip_phone_android.media.module;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.AudioTrack;
-import android.media.MediaRecorder;
 
 import androidx.core.app.ActivityCompat;
 
 import java.util.concurrent.locks.ReentrantLock;
 
 public class AudioRecorder {
-
-    ////////////////////////////////////////////////////////////////////////////////
-
-    private final int audioSource = MediaRecorder.AudioSource.MIC;
-    private final int sampleRate = 8000;
-    private final int channelCount = AudioFormat.CHANNEL_IN_MONO;
-    private final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-    private final int bufferSize = AudioTrack.getMinBufferSize(sampleRate, channelCount, audioFormat);
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -35,11 +24,11 @@ public class AudioRecorder {
         }
 
         audioRecord = new AudioRecord(
-                audioSource,
-                sampleRate,
-                channelCount,
-                audioFormat,
-                bufferSize
+                SoundHandler.AUDIO_SOURCE,
+                SoundHandler.SAMPLE_RATE,
+                SoundHandler.CHANNEL_COUNT,
+                SoundHandler.AUDIO_FORMAT,
+                SoundHandler.BUFFER_SIZE
         );
     }
 
@@ -89,8 +78,8 @@ public class AudioRecorder {
                 return null;
             }
 
-            byte[] data = new byte[bufferSize];
-            int retValue = audioRecord.read(data, 0, bufferSize);
+            byte[] data = new byte[SoundHandler.BUFFER_SIZE];
+            int retValue = audioRecord.read(data, 0, SoundHandler.BUFFER_SIZE);
             if (retValue > 0) {
                 return data;
             } else {
