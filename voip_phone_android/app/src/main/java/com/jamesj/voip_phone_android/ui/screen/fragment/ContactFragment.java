@@ -72,7 +72,7 @@ public class ContactFragment extends Fragment {
         //
         contactManager = new ContactManager(rootView.getContext());
 
-        adapter = new ContactListAdapter(contactManager);
+        adapter = new ContactListAdapter(getParentFragmentManager(), contactManager);
 
         contactListView = rootView.findViewById(R.id.list_view);
         contactListView.setAdapter(adapter);

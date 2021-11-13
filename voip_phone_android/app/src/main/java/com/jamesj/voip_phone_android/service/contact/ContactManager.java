@@ -255,7 +255,7 @@ public class ContactManager {
         }
     }
 
-    public LinkedList<ContactInfo> cloneContactInfoSet() {
+    /*public LinkedList<ContactInfo> cloneContactInfoSet() {
         try {
             contactListLock.lock();
 
@@ -266,7 +266,7 @@ public class ContactManager {
         } finally {
             contactListLock.unlock();
         }
-    }
+    }*/
 
     public int getIndexByContactInfo(ContactInfo contactInfo) {
         if (contactInfo == null) {
@@ -355,7 +355,7 @@ public class ContactManager {
             return false;
         }
 
-        String contactDataString = contactInfo.toString();
+        //String contactDataString = contactInfo.toString();
         String mdn = contactInfo.getMdn();
 
         try {

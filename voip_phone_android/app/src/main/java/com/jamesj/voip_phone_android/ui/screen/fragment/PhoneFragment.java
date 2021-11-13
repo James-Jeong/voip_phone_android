@@ -377,4 +377,7 @@ public class PhoneFragment extends Fragment {
         fragmentManager.popBackStack();
     }*/
 
+    public EditText getRemoteHostNameEditText() {
+        return remoteHostNameEditText;
+    }
 }

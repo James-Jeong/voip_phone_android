@@ -1,6 +1,8 @@
 package com.jamesj.voip_phone_android.service;
 
 import com.jamesj.voip_phone_android.config.ConfigManager;
+import com.jamesj.voip_phone_android.service.contact.ContactInfo;
+import com.jamesj.voip_phone_android.ui.screen.activity.MasterFragmentActivity;
 
 public class AppInstance {
 
@@ -13,6 +15,11 @@ public class AppInstance {
 
     private int cpuUsage = 0;
     private int memUsage = 0;
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    private MasterFragmentActivity masterFragmentActivity = null;
+    private ContactInfo curContactInfo = null;
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -67,5 +74,21 @@ public class AppInstance {
 
     public void setConfigManager(ConfigManager configManager) {
         this.configManager = configManager;
+    }
+
+    public MasterFragmentActivity getMasterFragmentActivity() {
+        return masterFragmentActivity;
+    }
+
+    public void setMasterFragmentActivity(MasterFragmentActivity masterFragmentActivity) {
+        this.masterFragmentActivity = masterFragmentActivity;
+    }
+
+    public ContactInfo getCurContactInfo() {
+        return curContactInfo;
+    }
+
+    public void setCurContactInfo(ContactInfo curContactInfo) {
+        this.curContactInfo = curContactInfo;
     }
 }

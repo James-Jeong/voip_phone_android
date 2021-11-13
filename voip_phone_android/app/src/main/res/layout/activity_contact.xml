@@ -36,7 +36,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/contact_add_button"
-                    android:layout_width="70sp"
+                    android:layout_width="80sp"
                     android:layout_height="40sp"
                     android:text="@string/contact_add_button_name"
                     android:textSize="10sp"
@@ -47,7 +47,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/contact_modify_button"
-                    android:layout_width="70sp"
+                    android:layout_width="80sp"
                     android:layout_height="40sp"
                     android:text="@string/contact_modify_button_name"
                     android:textSize="10sp"
@@ -59,7 +59,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/contact_remove_button"
-                    android:layout_width="70sp"
+                    android:layout_width="80sp"
                     android:layout_height="40sp"
                     android:text="@string/contact_remove_button_name"
                     android:textSize="10sp"
@@ -94,7 +94,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/contact_search_button"
-                    android:layout_width="70sp"
+                    android:layout_width="80sp"
                     android:layout_height="40sp"
                     android:text="@string/contact_search_button_name"
                     android:textSize="10sp"

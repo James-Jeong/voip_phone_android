@@ -9,16 +9,22 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentManager;
+
 import com.jamesj.voip_phone_android.R;
+import com.jamesj.voip_phone_android.service.AppInstance;
 import com.jamesj.voip_phone_android.service.contact.ContactInfo;
 import com.jamesj.voip_phone_android.service.contact.ContactManager;
+import com.jamesj.voip_phone_android.ui.screen.activity.MasterFragmentActivity;
 import com.orhanobut.logger.Logger;
 
 public class ContactListAdapter extends BaseAdapter {
 
     ///////////////////////////////////////////////
 
+    private final FragmentManager fragmentManager;
     private final ContactManager contactManager;
+    private ContactInfo curContactInfo = null;
 
     ///////////////////////////////////////////////
 
@@ -39,7 +45,8 @@ public class ContactListAdapter extends BaseAdapter {
 
     ///////////////////////////////////////////////
 
-    public ContactListAdapter(ContactManager contactManager) {
+    public ContactListAdapter(FragmentManager fragmentManager, ContactManager contactManager) {
+        this.fragmentManager = fragmentManager;
         this.contactManager = contactManager;
     }
 
@@ -73,6 +80,7 @@ public class ContactListAdapter extends BaseAdapter {
 
         //
         Button callButton = convertView.findViewById(R.id.button_call); callButton.setBackgroundColor(Color.BLACK);
+        this.curContactInfo = contactInfo;
         callButton.setOnClickListener(this::call);
         //
 
@@ -101,7 +109,25 @@ public class ContactListAdapter extends BaseAdapter {
     }
 
     public void call(View v) {
+        AppInstance.getInstance().setCurContactInfo(curContactInfo);
 
+        MasterFragmentActivity masterFragmentActivity = AppInstance.getInstance().getMasterFragmentActivity();
+        if (masterFragmentActivity == null) {
+            return;
+        }
+
+        // 1. PhoneFragment 의 remoteHostNameEditText 에 MDN 설정
+        masterFragmentActivity.getPhoneFragment().getRemoteHostNameEditText().setText(curContactInfo.getMdn());
+        //
+
+        // 2. PhoneFragment 로 화면 전환
+        masterFragmentActivity.getTabLayout().selectTab(
+                masterFragmentActivity.getTabLayout().getTabAt(0)
+        );
+        masterFragmentActivity.hideContactFragment();
+        masterFragmentActivity.getSupportFragmentManager().
+                beginTransaction().show(masterFragmentActivity.getPhoneFragment()).commit();
+        //
     }
 
 }

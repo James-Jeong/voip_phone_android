@@ -13,14 +13,13 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.tabs.TabLayout;
 import com.jamesj.voip_phone_android.R;
+import com.jamesj.voip_phone_android.service.AppInstance;
 import com.jamesj.voip_phone_android.ui.screen.fragment.ContactFragment;
 import com.jamesj.voip_phone_android.ui.screen.fragment.OptionFragment;
 import com.jamesj.voip_phone_android.ui.screen.fragment.PhoneFragment;
 import com.jamesj.voip_phone_android.ui.screen.fragment.base.contact.ContactManagerFragment;
 
 public class MasterFragmentActivity extends FragmentActivity {
-
-    ///////////////////////////////////////////////
 
     private TabLayout tabLayout;
 
@@ -40,8 +39,6 @@ public class MasterFragmentActivity extends FragmentActivity {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         View focusView = getCurrentFocus();
         if (focusView != null) {
-
-
             Rect rect = new Rect();
             focusView.getGlobalVisibleRect(rect);
             int x = (int) ev.getX(), y = (int) ev.getY();
@@ -137,9 +134,11 @@ public class MasterFragmentActivity extends FragmentActivity {
             AmrManager.getInstance().init();
         }*/
         //
+
+        AppInstance.getInstance().setMasterFragmentActivity(this);
     }
 
-    private void hideContactFragment() {
+    public void hideContactFragment() {
         ContactManagerFragment contactManagerFragment = contactFragment.getContactManagerFragment();
         if (contactManagerFragment != null) {
             contactManagerFragment.finish();
@@ -180,5 +179,21 @@ public class MasterFragmentActivity extends FragmentActivity {
         lastTimeBackPressed = System.currentTimeMillis();
         Toast.makeText(this, "뒤로가기 버튼을 한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();*/
 
+    }
+
+    public TabLayout getTabLayout() {
+        return tabLayout;
+    }
+
+    public PhoneFragment getPhoneFragment() {
+        return phoneFragment;
+    }
+
+    public OptionFragment getOptionFragment() {
+        return optionFragment;
+    }
+
+    public ContactFragment getContactFragment() {
+        return contactFragment;
     }
 }
