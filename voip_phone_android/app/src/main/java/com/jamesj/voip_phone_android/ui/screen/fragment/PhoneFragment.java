@@ -363,6 +363,20 @@ public class PhoneFragment extends Fragment {
         button.setBackgroundColor(Color.GRAY);
     }
 
+    public void processInvite(String fromNo) {
+        if (fromNo != null) {
+            remoteHostNameEditText.setText(fromNo);
+        }
+
+        disableButton(callButton);
+        enableButton(byeButton);
+    }
+
+    public void processBye() {
+        enableButton(callButton);
+        disableButton(byeButton);
+    }
+
     ///////////////////////////////////////////////
 
     /*@Override

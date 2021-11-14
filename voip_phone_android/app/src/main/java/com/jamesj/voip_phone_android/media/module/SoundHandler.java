@@ -49,12 +49,22 @@ public class SoundHandler {
         // nothing
     }
 
-    public SoundHandler getInstance() {
+    public static SoundHandler getInstance() {
         if (soundHandler == null) {
             soundHandler = new SoundHandler();
         }
 
         return soundHandler;
+    }
+
+    public void start() {
+        startMike();
+        startSpeaker();
+    }
+
+    public void stop() {
+        stopSpeaker();
+        stopMike();
     }
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -27,7 +27,6 @@ import android.javax.sip.header.AuthorizationHeader;
 import android.javax.sip.header.CSeqHeader;
 import android.javax.sip.header.CallIdHeader;
 import android.javax.sip.header.ContactHeader;
-import android.javax.sip.header.ContentDispositionHeader;
 import android.javax.sip.header.ContentTypeHeader;
 import android.javax.sip.header.ExpiresHeader;
 import android.javax.sip.header.FromHeader;
@@ -47,6 +46,7 @@ import android.javax.sip.message.Response;
 import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.media.MediaManager;
 import com.jamesj.voip_phone_android.media.mix.AudioMixManager;
+import com.jamesj.voip_phone_android.media.module.SoundHandler;
 import com.jamesj.voip_phone_android.media.module.TaskManager;
 import com.jamesj.voip_phone_android.media.netty.NettyChannelManager;
 import com.jamesj.voip_phone_android.media.netty.module.NettyChannel;
@@ -107,24 +107,6 @@ public class SipManager implements SipListener {
 
     public SipManager() {
         Logger.addLogAdapter(new AndroidLogAdapter());
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-
-    public String getToIp() {
-        return toIp;
-    }
-
-    public void setToIp(String toIp) {
-        this.toIp = toIp;
-    }
-
-    public int getToPort() {
-        return toPort;
-    }
-
-    public void setToPort(int toPort) {
-        this.toPort = toPort;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -361,11 +343,7 @@ public class SipManager implements SipListener {
                 Logger.d("Recv 403 Forbidden.");
                 if (requestMethodName.equals(Request.INVITE)) {
                     Logger.d("Call is not started.");
-                    // TODO
-                    /*if (FrameManager.getInstance().processByeToFrame(ServiceManager.CLIENT_FRAME_NAME)) {
-                        Logger.d("Success to process the 403 response to [%s] frame. (callId=%s)", ServiceManager.CLIENT_FRAME_NAME, callId);
-                    }*/
-                    //
+                    AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processBye();
 
                     TaskManager.getInstance().removeTask(CallCancelHandler.class.getSimpleName() + callId);
                     callInfo.setIsCallStarted(false);
@@ -378,11 +356,7 @@ public class SipManager implements SipListener {
             case Response.REQUEST_TERMINATED:
                 Logger.d("Recv 487 Request Terminated. Call is not started.");
                 if (requestMethodName.equals(Request.INVITE)) {
-                    // TODO
-                    /*if (FrameManager.getInstance().processByeToFrame(ServiceManager.CLIENT_FRAME_NAME)) {
-                        Logger.d("Success to process the 487 response to [%s] frame. (callId=%s)", ServiceManager.CLIENT_FRAME_NAME, callId);
-                    }*/
-                    //
+                    AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processBye();
 
                     TaskManager.getInstance().removeTask(CallCancelHandler.class.getSimpleName() + callId);
                     callInfo.setIsCallStarted(false);
@@ -624,13 +598,7 @@ public class SipManager implements SipListener {
                 RegiManager.getInstance().scheduleRegi(fromNo, expires);
 
                 Logger.d("Send 200 OK for REGISTER (FromNo=%s): %s", fromNo, response);
-
-                // TODO
-                /*if (FrameManager.getInstance().processRegisterToFrame(fromNo)) {
-                    Logger.d("Success to process the register to [%s] frame. (fromNo=%s)", ServiceManager.CLIENT_FRAME_NAME, fromNo);
-                }*/
-                //
-
+                AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processBye();
                 Logger.d("Success to register. (fromNo=%s)", fromNo);
             } else {
                 String fromSipIp = parseSipIp(fromHeader);
@@ -771,7 +739,7 @@ public class SipManager implements SipListener {
 
             request.addHeader(contactHeader);
 
-            List userAgentList = new ArrayList();
+            ArrayList<String> userAgentList = new ArrayList<>();
             userAgentList.add(getRandomStr(6));
             UserAgentHeader userAgentHeader = headerFactory.createUserAgentHeader(userAgentList);
             request.addHeader(userAgentHeader);
@@ -975,15 +943,6 @@ public class SipManager implements SipListener {
                 CallManager.getInstance().addSdpIntoCallInfo(callId, sdp);
             }
 
-            if (isUseClient) {
-                callInfo.setIsCallRecv(true);
-                // TODO
-                /*if (FrameManager.getInstance().processInviteToFrame(fromNo)) {
-                    Logger.d("Success to process the invite request to [%s] frame. (callId=%s, remoteHostName=%s)", ServiceManager.CLIENT_FRAME_NAME, callId, fromNo);
-                }*/
-                //
-            }
-
             // 1) Send 100 Trying
             Response tryingResponse = messageFactory.createResponse(Response.TRYING, request);
             serverTransaction.sendResponse(tryingResponse);
@@ -1042,14 +1001,16 @@ public class SipManager implements SipListener {
                 }
             }
 
-            // 클라이언트 입장에서 자동 호 수락 옵션이 켜져있으면, 상대방 UA (프록시) 로 200 OK 를 바로 전송한다.
-            if (isUseClient && configManager.isCallAutoAccept()) {
-                if (sendInviteOk(callId)) {
-                    // TODO
-                    /*if (FrameManager.getInstance().processAutoInviteToFrame(fromNo)) {
-                        Logger.d("Success to process the auto-invite to [%s] frame. (callId=%s)", ServiceManager.CLIENT_FRAME_NAME, callId);
-                    }*/
-                    //
+            if (isUseClient) {
+                callInfo.setIsCallRecv(true);
+
+                // 클라이언트 입장에서 자동 호 수락 옵션이 켜져있으면, 상대방 UA (프록시) 로 200 OK 를 바로 전송한다.
+                if (configManager.isCallAutoAccept()) {
+                    if (sendInviteOk(callId)) {
+                        AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processInvite(fromNo);
+                    }
+                } else {
+                    AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processInvite(null);
                 }
             }
         } catch (Exception e) {
@@ -1128,11 +1089,7 @@ public class SipManager implements SipListener {
 
                         if (!localCodec.equals(remoteCodec)) {
                             Logger.d("(%s) Send CANCEL to remote call.", callId);
-                            // TODO
-                            /*if (FrameManager.getInstance().processByeToFrame(ServiceManager.CLIENT_FRAME_NAME)) {
-                                Logger.d("Success to process the cancel request to [%s] frame. (callId=%s)", ServiceManager.CLIENT_FRAME_NAME, callId);
-                            }*/
-                            //
+                            AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processBye();
                             sendCancel(callId, callInfo.getToNo(), callInfo.getToSipIp(), callInfo.getToSipPort());
                             return false;
                         }
@@ -1152,9 +1109,9 @@ public class SipManager implements SipListener {
                 return false;
             }
 
-            /*if (configManager.isUseClient()) {
-                VoipClient.getInstance().start();
-            }*/
+            if (configManager.isUseClient()) {
+                SoundHandler.getInstance().start();
+            }
         } catch (Exception e) {
             Logger.w("(%s) Fail to send 200 OK for the invite request.", callId, e);
         }
@@ -1314,8 +1271,8 @@ public class SipManager implements SipListener {
             return;
         }
 
-        FromHeader fromHeader = (FromHeader) request.getHeader(FromHeader.NAME);
-        String fromNo = fromHeader.getAddress().getDisplayName();
+        //FromHeader fromHeader = (FromHeader) request.getHeader(FromHeader.NAME);
+        //String fromNo = fromHeader.getAddress().getDisplayName();
 
         ConfigManager configManager = AppInstance.getInstance().getConfigManager();
         boolean isUseClient = configManager.isUseClient();
@@ -1351,11 +1308,7 @@ public class SipManager implements SipListener {
                 Logger.d("Send 200 OK for CANCEL: %s", response);
 
                 if (isUseClient) {
-                    // TODO
-                    /*if (FrameManager.getInstance().processByeToFrame(ServiceManager.CLIENT_FRAME_NAME)) {
-                        Logger.d("Success to process the cancel request to [%s] frame. (callId=%s)", ServiceManager.CLIENT_FRAME_NAME, callId);
-                    }*/
-                    //
+                    AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processBye();
                 }
 
                 if (configManager.isProxyMode()) {
@@ -1471,7 +1424,7 @@ public class SipManager implements SipListener {
                 }
             } else {
                 NettyChannelManager.getInstance().stop();
-                //VoipClient.getInstance().stop();
+                SoundHandler.getInstance().stop();
             }
 
             if (configManager.isUseClient()) {
@@ -1508,8 +1461,8 @@ public class SipManager implements SipListener {
             return;
         }
 
-        FromHeader fromHeader = (FromHeader) request.getHeader(FromHeader.NAME);
-        String fromNo = fromHeader.getAddress().getDisplayName();
+        //FromHeader fromHeader = (FromHeader) request.getHeader(FromHeader.NAME);
+        //String fromNo = fromHeader.getAddress().getDisplayName();
 
         ConfigManager configManager = AppInstance.getInstance().getConfigManager();
         boolean isUseClient = configManager.isUseClient();
@@ -1542,7 +1495,7 @@ public class SipManager implements SipListener {
                     }
                 } else {
                     NettyChannelManager.getInstance().stop();
-                    //VoipClient.getInstance().stop();
+                    SoundHandler.getInstance().stop();
                 }
 
                 callInfo.setIsInviteAccepted(false);
@@ -1554,11 +1507,7 @@ public class SipManager implements SipListener {
                 Logger.d("Send 200 OK for BYE: %s", response);
 
                 if (isUseClient) {
-                    // TODO
-                    /*if (FrameManager.getInstance().processByeToFrame(ServiceManager.CLIENT_FRAME_NAME)) {
-                        Logger.d("Success to process the bye request to [%s] frame. (callId=%s)", ServiceManager.CLIENT_FRAME_NAME, callId);
-                    }*/
-                    //
+                    AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processBye();
                 }
             }
         } catch (Exception e) {
@@ -1617,10 +1566,7 @@ public class SipManager implements SipListener {
             serverTransaction.sendResponse(response);
             Logger.d("Send 200 OK for MESSAGE: %s", response);
 
-            ContentDispositionHeader contentDispositionHeader = (ContentDispositionHeader) request.getHeader(ContentDispositionHeader.NAME);
-            if (contentDispositionHeader != null) {
-                //FrameManager.getInstance().getClientFrame().appendText("[" + contentDispositionHeader.getName() + "]\n");
-            }
+            //ContentDispositionHeader contentDispositionHeader = (ContentDispositionHeader) request.getHeader(ContentDispositionHeader.NAME);
         } catch (Exception e) {
             Logger.w("Fail to send the 200 OK response for the MESSAGE request.", e);
         }
@@ -1692,11 +1638,7 @@ public class SipManager implements SipListener {
                                     sendBye(callId, callInfo.getToNo(), callInfo.getToSipIp(), callInfo.getToSipPort());
                                     Logger.d("(%s) Send BYE to remote call.", callId);
 
-                                    // TODO
-                                    /*if (FrameManager.getInstance().processByeToFrame(ServiceManager.CLIENT_FRAME_NAME)) {
-                                        Logger.d("(%s) Success to process the bye request to [%s] frame.", callId, ServiceManager.CLIENT_FRAME_NAME);
-                                    }*/
-                                    //
+                                    AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processBye();
                                     return;
                                 }
                             }
@@ -1717,7 +1659,7 @@ public class SipManager implements SipListener {
                                 }
                             }
                         } else {
-                            //VoipClient.getInstance().start();
+                            SoundHandler.getInstance().start();
                         }
 
                         // INVITE 200 OK 인 경우 ACK 전송
