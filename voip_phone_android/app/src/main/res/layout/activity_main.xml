@@ -110,17 +110,6 @@
                     app:strokeWidth="3sp"
                     />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/contactButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10sp"
-                    android:text="@string/contact_button_name"
-                    android:textColor="@color/white"
-                    app:strokeColor="@color/white"
-                    app:strokeWidth="3sp"
-                    />
-
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout

@@ -114,14 +114,6 @@ public class NettyChannelManager {
                 if (channel == null) {
                     Logger.w("Fail to open client channel.");
                 } else {
-                    /*TaskManager.getInstance().addTask(
-                            ClientRtpHandler.class.getSimpleName(),
-                            new ClientRtpHandler(
-                                    clientChannel.getJitterBuffer(),
-                                    1
-                            )
-                    );*/
-
                     Logger.d("Success to open client channel.");
                 }
             } else {
@@ -136,8 +128,6 @@ public class NettyChannelManager {
      */
     private void closeClientChannel() {
         if (clientChannel != null) {
-            //TaskManager.getInstance().removeTask(ClientRtpHandler.class.getSimpleName());
-
             int port = clientChannel.getListenPort();
             clientChannel.closeChannel();
             clientChannel.stop();

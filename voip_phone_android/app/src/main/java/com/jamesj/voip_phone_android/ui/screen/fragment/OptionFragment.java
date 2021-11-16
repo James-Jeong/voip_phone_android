@@ -1,6 +1,5 @@
 package com.jamesj.voip_phone_android.ui.screen.fragment;
 
-import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
@@ -8,11 +7,9 @@ import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputFilter;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -291,7 +288,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             if (localHostNameEditText != null) {
                 localHostNameEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20) } );
                 localHostNameEditText.setText(configManager.getHostName());
-                localHostNameEditText.setOnKeyListener((v, keyCode, event) -> {
+                /*localHostNameEditText.setOnKeyListener((v, keyCode, event) -> {
                     if (keyCode == KeyEvent.KEYCODE_ENTER) {
                         InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(INPUT_METHOD_SERVICE);
                         if (imm != null) {
@@ -299,7 +296,7 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
                         }
                     }
                     return true;
-                });
+                });*/
             }
             localHostNameEnterButton = rootView.findViewById(R.id.localHostNameEnterButton);
             localHostNameEnterButton.setOnClickListener(this::localHostNameEnterButtonClicked);
@@ -310,15 +307,6 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             if (fromSipIpEditText != null) {
                 fromSipIpEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(15) } );
                 fromSipIpEditText.setText(configManager.getFromIp());
-                fromSipIpEditText.setOnKeyListener((v, keyCode, event) -> {
-                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        }
-                    }
-                    return true;
-                });
             }
             fromSipIpEnterButton = rootView.findViewById(R.id.localSipIpEnterButton);
             fromSipIpEnterButton.setOnClickListener(this::fromSipIpEnterButtonClicked);
@@ -329,15 +317,6 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             if (fromSipPortEditText != null) {
                 fromSipPortEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(5) } );
                 fromSipPortEditText.setText(String.valueOf(configManager.getFromPort()));
-                fromSipPortEditText.setOnKeyListener((v, keyCode, event) -> {
-                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        }
-                    }
-                    return true;
-                });
             }
             fromSipPortEnterButton = rootView.findViewById(R.id.localSipPortEnterButton);
             fromSipPortEnterButton.setOnClickListener(this::fromSipPortEnterButtonClicked);
@@ -348,15 +327,6 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             if (mediaIpEditText != null) {
                 mediaIpEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(15) } );
                 mediaIpEditText.setText(configManager.getNettyServerIp());
-                mediaIpEditText.setOnKeyListener((v, keyCode, event) -> {
-                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        }
-                    }
-                    return true;
-                });
             }
             mediaIpEnterButton = rootView.findViewById(R.id.localMediaIpEnterButton);
             mediaIpEnterButton.setOnClickListener(this::mediaIpEnterButtonClicked);
@@ -367,15 +337,6 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             if (mediaPortEditText != null) {
                 mediaPortEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(5) } );
                 mediaPortEditText.setText(String.valueOf(configManager.getNettyServerPort()));
-                mediaPortEditText.setOnKeyListener((v, keyCode, event) -> {
-                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        }
-                    }
-                    return true;
-                });
             }
             mediaPortEnterButton = rootView.findViewById(R.id.localMediaPortEnterButton);
             mediaPortEnterButton.setOnClickListener(this::mediaPortEnterButtonClicked);
@@ -386,15 +347,6 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
             if (recordPathEditText != null) {
                 recordPathEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(100) } );
                 recordPathEditText.setText(configManager.getRecordPath());
-                recordPathEditText.setOnKeyListener((v, keyCode, event) -> {
-                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        }
-                    }
-                    return true;
-                });
             }
             recordPathEnterButton = rootView.findViewById(R.id.recordPathEnterButton);
             recordPathEnterButton.setOnClickListener(this::recordPathEnterButtonClicked);

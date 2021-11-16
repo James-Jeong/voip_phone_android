@@ -1,6 +1,9 @@
 package com.jamesj.voip_phone_android.media.netty.handler;
 
 import com.jamesj.voip_phone_android.config.ConfigManager;
+import com.jamesj.voip_phone_android.media.dtmf.base.DtmfUnit;
+import com.jamesj.voip_phone_android.media.mix.base.AudioFrame;
+import com.jamesj.voip_phone_android.media.module.SoundHandler;
 import com.jamesj.voip_phone_android.media.protocol.rtp.RtpPacket;
 import com.jamesj.voip_phone_android.media.protocol.rtp.module.RtpQosHandler;
 import com.jamesj.voip_phone_android.service.AppInstance;
@@ -66,11 +69,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<DatagramPa
     private void handleRtpPacket(ByteBuf buf) {
         try {
             if (configManager.isUseClient()) {
-                /*VoipClient voipClient = VoipClient.getInstance();
-                if (!voipClient.isStarted()) {
-                    return;
-                }*/
-
                 // 1) Read a packet data.
                 int readBytes = buf.readableBytes();
                 byte[] data = new byte[readBytes];
@@ -93,8 +91,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<DatagramPa
                 // 3) Write the audio data to the speaker
                 if (payload.length > 0) {
                     // TODO
-                    //voipClient.writeToSpeaker(payload, rtpPacket.getPayloadType());
-                    //Logger.d("Recv RTP. (remoteHostName=%s, payloadLength=%s)", voipClient.getRemoteHostName(), payload.length);
+                    AudioFrame audioFrame = new AudioFrame(rtpPacket.getPayloadType() == DtmfUnit.DTMF_TYPE);
+                    audioFrame.setData(payload, true);
+                    SoundHandler.getInstance().getSpeakerBuffer().offer(audioFrame);
                 }
                 //
             }

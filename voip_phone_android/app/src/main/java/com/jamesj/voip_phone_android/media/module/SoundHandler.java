@@ -1,7 +1,6 @@
 package com.jamesj.voip_phone_android.media.module;
 
 import android.media.AudioFormat;
-import android.media.AudioTrack;
 import android.media.MediaRecorder;
 
 import com.jamesj.voip_phone_android.media.mix.base.AudioBuffer;
@@ -37,7 +36,8 @@ public class SoundHandler {
     public static final int SAMPLE_RATE = 8000;
     public static final int CHANNEL_COUNT = AudioFormat.CHANNEL_IN_MONO;
     public static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-    public static final int BUFFER_SIZE = AudioTrack.getMinBufferSize(SAMPLE_RATE, CHANNEL_COUNT, AUDIO_FORMAT);
+    //public static final int BUFFER_SIZE = AudioTrack.getMinBufferSize(SAMPLE_RATE, CHANNEL_COUNT, AUDIO_FORMAT) * 2;
+    public static final int BUFFER_SIZE = 2;
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -92,6 +92,8 @@ public class SoundHandler {
                             TimeUnit.MILLISECONDS
                     );
                 }
+
+                //Toast.makeText(AppInstance.getInstance().getMasterFragmentActivity().getApplicationContext(), "[MIKE ON]", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,6 +112,7 @@ public class SoundHandler {
         }
 
         mikeBuffer.clear();
+        //Toast.makeText(AppInstance.getInstance().getMasterFragmentActivity(), "[MIKE OFF]", Toast.LENGTH_SHORT).show();
     }
     //
 
@@ -129,7 +132,10 @@ public class SoundHandler {
                         udpReceiver.getInterval(),
                         TimeUnit.MILLISECONDS
                 );
+
                 udpReceiver.start();
+
+                //Toast.makeText(AppInstance.getInstance().getMasterFragmentActivity().getApplicationContext(), "[SPEAKER ON]", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,8 +154,13 @@ public class SoundHandler {
         }
 
         speakerBuffer.resetBuffer();
+        //Toast.makeText(AppInstance.getInstance().getMasterFragmentActivity().getApplicationContext(), "[SPEAKER OFF]", Toast.LENGTH_SHORT).show();
     }
     //
+
+    public AudioBuffer getSpeakerBuffer() {
+        return speakerBuffer;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
 

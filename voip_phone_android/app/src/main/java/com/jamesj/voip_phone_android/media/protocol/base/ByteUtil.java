@@ -25,6 +25,17 @@ public class ByteUtil {
         }
     }
 
+    public static byte[] changeByteOrder(byte[] data) {
+        int dataLength = data.length;
+        byte[] convertedData = new byte[dataLength];
+
+        for (int i = 0; i < dataLength; i++) {
+            convertedData[i] = data[dataLength - (i + 1)];
+        }
+
+        return convertedData;
+    }
+
     public static byte[] shortToBytes(short s, boolean isBigEndian) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(NUM_BYTES_IN_SHORT);
         byteBuffer.order(isBigEndian? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);

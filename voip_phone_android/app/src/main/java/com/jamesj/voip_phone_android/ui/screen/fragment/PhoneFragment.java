@@ -24,6 +24,8 @@ import com.jamesj.voip_phone_android.R;
 import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.media.MediaManager;
 import com.jamesj.voip_phone_android.media.module.ResourceManager;
+import com.jamesj.voip_phone_android.media.module.SoundHandler;
+import com.jamesj.voip_phone_android.media.netty.NettyChannelManager;
 import com.jamesj.voip_phone_android.service.AppInstance;
 import com.jamesj.voip_phone_android.signal.module.NonceGenerator;
 import com.jamesj.voip_phone_android.signal.module.SipManager;
@@ -61,6 +63,7 @@ public class PhoneFragment extends Fragment {
     ///////////////////////////////////////////////
     // CALL INFO
 
+    private String sessionId = null;
     private String callId = null;
 
     ///////////////////////////////////////////////
@@ -128,9 +131,6 @@ public class PhoneFragment extends Fragment {
         registerButton = rootView.findViewById(R.id.registerButton); registerButton.setBackgroundColor(Color.BLACK);
         registerButton.setOnClickListener(this::registerButtonClicked);
 
-        contactButton = rootView.findViewById(R.id.contactButton); contactButton.setBackgroundColor(Color.BLACK);
-        contactButton.setOnClickListener(this::contactButtonClicked);
-
         callButton = rootView.findViewById(R.id.callButton); callButton.setBackgroundColor(Color.BLACK);
         callButton.setOnClickListener(this::callButtonClicked);
 
@@ -153,7 +153,6 @@ public class PhoneFragment extends Fragment {
         offButton.setEnabled(false);
 
         disableButton(registerButton);
-        disableButton(contactButton);
         disableButton(callButton);
         disableButton(byeButton);
 
@@ -227,7 +226,6 @@ public class PhoneFragment extends Fragment {
                 enableButton(registerButton);
             }
 
-            enableButton(contactButton);
             enableButton(callButton);
             if (optionFragment.isDtmf()) {
                 enableDtmf();
@@ -261,7 +259,6 @@ public class PhoneFragment extends Fragment {
         //proxyHostNameInputLayout.setBackgroundColor(Color.GRAY);
         disableButton(registerButton);
 
-        disableButton(contactButton);
         disableButton(callButton);
         disableDtmf();
         disableButton(byeButton);
@@ -277,6 +274,13 @@ public class PhoneFragment extends Fragment {
             sipManager.stop();
             sipManager = null;
         }
+
+        NettyChannelManager.getInstance().stop();
+        SoundHandler.getInstance().stop();
+
+        sessionId = null;
+        callId = null;
+
         //Toast.makeText(getContext, "[OFF]", Toast.LENGTH_SHORT).show();
     }
 
@@ -293,11 +297,12 @@ public class PhoneFragment extends Fragment {
         Toast.makeText(getContext(), "Register to [" + proxyHostNameEditText.getText() + "]", Toast.LENGTH_SHORT).show();
     }
 
-    public void contactButtonClicked(View view) {
-
-    }
-
     public void callButtonClicked(View view) {
+        if (callId != null) {
+            Toast.makeText(getContext(), "Call is ongoing. [" + remoteHostNameEditText.getText() + "] (callId=" + callId + ")", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (remoteHostNameEditText.getText() == null || remoteHostNameEditText.getText().length() == 0) {
             return;
         }
@@ -305,10 +310,14 @@ public class PhoneFragment extends Fragment {
         enableButton(byeButton);
         disableButton(callButton);
 
-        callId = NonceGenerator.createRandomNonce();
+        disableButton(onButton);
+        disableButton(offButton);
+        disableButton(exitButton);
+
+        sessionId = NonceGenerator.createRandomNonce();
         ConfigManager configManager = AppInstance.getInstance().getConfigManager();
-        sipManager.sendInvite(
-                callId,
+        callId = sipManager.sendInvite(
+                sessionId,
                 configManager.getHostName(),
                 remoteHostNameEditText.getText().toString(),
                 configManager.getToIp(),
@@ -320,11 +329,13 @@ public class PhoneFragment extends Fragment {
 
     public void byeButtonClicked(View view) {
         if (callId == null) {
+            Toast.makeText(getContext(), "Call is not exist. [" + remoteHostNameEditText.getText() + "] (callId=" + callId + ")", Toast.LENGTH_SHORT).show();
             return;
         }
 
         disableButton(byeButton);
         enableButton(callButton);
+        enableButton(offButton);
 
         ConfigManager configManager = AppInstance.getInstance().getConfigManager();
         sipManager.sendBye(
@@ -333,6 +344,8 @@ public class PhoneFragment extends Fragment {
                 configManager.getToIp(),
                 configManager.getToPort()
         );
+        sessionId = null;
+        callId = null;
 
         Toast.makeText(getContext(), "Bye to [" + remoteHostNameEditText.getText() + "] (callId=" + callId + ")", Toast.LENGTH_SHORT).show();
     }

@@ -7,14 +7,11 @@ import android.media.AudioRecord;
 
 import androidx.core.app.ActivityCompat;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 public class AudioRecorder {
 
     ////////////////////////////////////////////////////////////////////////////////
 
     private AudioRecord audioRecord;
-    private final ReentrantLock audioRecordLock = new ReentrantLock();
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,68 +25,43 @@ public class AudioRecorder {
                 SoundHandler.SAMPLE_RATE,
                 SoundHandler.CHANNEL_COUNT,
                 SoundHandler.AUDIO_FORMAT,
-                SoundHandler.BUFFER_SIZE
+                320
         );
     }
 
     ////////////////////////////////////////////////////////////////////////////////
 
     public void startRecording() {
-        try {
-            audioRecordLock.lock();
-
-            if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
-                return;
-            }
-
-            audioRecord.startRecording();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            audioRecordLock.unlock();
+        if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
+            return;
         }
+
+        audioRecord.startRecording();
     }
 
     public void stopRecording() {
-        try {
-            audioRecordLock.lock();
-
-            if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_STOPPED) {
-                return;
-            }
-
-            audioRecord.stop();
-            audioRecord.release();
-            audioRecord = null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            audioRecordLock.unlock();
+        if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_STOPPED) {
+            return;
         }
+
+        audioRecord.stop();
+        audioRecord.release();
+        audioRecord = null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
 
     public byte[] read() {
-        try {
-            audioRecordLock.lock();
-
-            if (audioRecord.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
-                return null;
-            }
-
-            byte[] data = new byte[SoundHandler.BUFFER_SIZE];
-            int retValue = audioRecord.read(data, 0, SoundHandler.BUFFER_SIZE);
-            if (retValue > 0) {
-                return data;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (audioRecord.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
             return null;
-        } finally {
-            audioRecordLock.unlock();
+        }
+
+        byte[] data = new byte[320];
+        int retValue = audioRecord.read(data, 0, 320);
+        if (retValue > 0) {
+            return data;
+        } else {
+            return null;
         }
     }
 

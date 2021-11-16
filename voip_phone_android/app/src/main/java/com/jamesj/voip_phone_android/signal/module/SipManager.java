@@ -280,6 +280,7 @@ public class SipManager implements SipListener {
             } else if (Request.INVITE.equals(request.getMethod())) {
                 processInvite(requestEvent);
             } else if (Request.BYE.equals(request.getMethod())) {
+                Logger.d("BYE IS COMMING");
                 processBye(requestEvent);
             } else if (Request.CANCEL.equals(request.getMethod())) {
                 processCancel(requestEvent);
@@ -643,18 +644,19 @@ public class SipManager implements SipListener {
     // INVITE
 
     /**
-     * @fn public void sendInvite (String sessionId, String fromHostName, String toHostName, String toIp, int toPort)
+     * @fn public String sendInvite (String sessionId, String fromHostName, String toHostName, String toIp, int toPort)
      * @brief INVITE 요청을 보내는 함수
      * @param sessionId Session Id (일회성)
      * @param fromHostName From Host name
      * @param toHostName To Host name
      * @param toIp Host sip ip
      * @param toPort Host sip port
+     * @return Call-ID
      */
-    public void sendInvite (String sessionId, String fromHostName, String toHostName, String toIp, int toPort) {
+    public String sendInvite (String sessionId, String fromHostName, String toHostName, String toIp, int toPort) {
         if (sessionId == null || toHostName == null || toIp == null || toPort <= 0) {
             Logger.w("Fail to send the invite request. (sessionId=%s, toHostName=%s, toIP=%s, toPort=%s)", sessionId, toHostName, toIp, toPort);
-            return;
+            return null;
         }
 
         try {
@@ -682,6 +684,7 @@ public class SipManager implements SipListener {
 
             // The "Call -Id" header
             CallIdHeader callIdHeader = this.sipProvider.getNewCallId();
+            String callId = callIdHeader.getCallId();
 
             // The " CSeq " header
             CSeqHeader cSeqHeader = this.headerFactory.createCSeqHeader(1L,Request.INVITE);
@@ -710,8 +713,6 @@ public class SipManager implements SipListener {
                     toIp,
                     toPort
             );
-
-            String callId = callInfo.getCallId();
 
             if (configManager.isProxyMode()) {
                 AudioMixManager.getInstance().addAudioMixer(
@@ -758,7 +759,7 @@ public class SipManager implements SipListener {
                         listenPort = nettyChannel.getListenPort();
                     } else {
                         Logger.w("Fail to send invite. (callId=%s)", callId);
-                        return;
+                        return null;
                     }
                 } else {
                     listenPort = configManager.getNettyServerPort();
@@ -768,7 +769,7 @@ public class SipManager implements SipListener {
             ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader("application", "sdp");
             Sdp localSdp = configManager.loadSdpConfig("LOCAL");
             if (localSdp == null) {
-                return;
+                return null;
             }
 
             localSdp.setMediaPort(Sdp.AUDIO, listenPort);
@@ -812,10 +813,12 @@ public class SipManager implements SipListener {
                     )
             );
             callInfo.setCallCancelHandlerId(callCancelHandlerId);
-        }
-        catch ( Exception e ) {
+
+            return callId;
+        } catch ( Exception e ) {
             Logger.w("INVITE Request sent failed.", e);
             e.printStackTrace();
+            return null;
         }
     }
 
@@ -1427,14 +1430,6 @@ public class SipManager implements SipListener {
                 SoundHandler.getInstance().stop();
             }
 
-            if (configManager.isUseClient()) {
-                // TODO
-                /*if (FrameManager.getInstance().processByeToFrame(ServiceManager.CLIENT_FRAME_NAME)) {
-                    Logger.d("Success to process the bye request to [%s] frame. (callId=%s)", ServiceManager.CLIENT_FRAME_NAME, callId);
-                }*/
-                //
-            }
-
             callInfo.setCallIdHeader(null);
             callInfo.setIsInviteAccepted(false);
             callInfo.setIsCallStarted(false);
@@ -1510,6 +1505,8 @@ public class SipManager implements SipListener {
                     AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processBye();
                 }
             }
+
+            Logger.d("@@@ 4");
         } catch (Exception e) {
             Logger.w("Fail to send the 200 OK response for the BYE request. (callId=%s)", callId, e);
         }

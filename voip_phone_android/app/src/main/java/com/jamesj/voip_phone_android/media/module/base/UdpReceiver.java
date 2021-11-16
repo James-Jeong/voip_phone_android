@@ -29,7 +29,7 @@ public class UdpReceiver extends TaskUnit {
     private int curRtpPayloadLength = 0;
 
     private final ConcurrentCyclicFIFO<MediaFrame> recvBuffer = new ConcurrentCyclicFIFO<>();
-    private ScheduledThreadPoolExecutor recvTaskExecutor;
+    private ScheduledThreadPoolExecutor recvTaskExecutor = null;
 
     private final AudioBuffer audioBuffer;
 
@@ -54,16 +54,17 @@ public class UdpReceiver extends TaskUnit {
 
         player = new AudioTrack.Builder()
                 .setAudioAttributes(new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
                         .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                         .build())
                 .setAudioFormat(new AudioFormat.Builder()
+                        .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
                         .setEncoding(SoundHandler.AUDIO_FORMAT)
                         .setSampleRate(SoundHandler.SAMPLE_RATE)
-                        .setChannelMask(SoundHandler.CHANNEL_COUNT)
                         .build())
-                .setBufferSizeInBytes(SoundHandler.BUFFER_SIZE)
+                .setBufferSizeInBytes(320)
                 .build();
+        player.play();
     }
 
     public void start() {
@@ -82,6 +83,8 @@ public class UdpReceiver extends TaskUnit {
                         recvTask.getInterval(),
                         TimeUnit.MILLISECONDS
                 );
+
+                Logger.d("recvTaskExecutor is created. ({})", recvTaskExecutor.toString());
             } catch (Exception e) {
                 Logger.w("UdpReceiver.start.Exception", e);
             }
@@ -89,7 +92,7 @@ public class UdpReceiver extends TaskUnit {
             Logger.d("UdpReceiver RecvTask is added.");
         }
 
-        switch (MediaManager.getInstance().getPriorityCodec()) {
+        /*switch (MediaManager.getInstance().getPriorityCodec()) {
             case MediaManager.EVS:
                 EvsManager.getInstance().startUdpReceiverTask(recvBuffer);
                 break;
@@ -101,14 +104,17 @@ public class UdpReceiver extends TaskUnit {
                 break;
             default:
                 break;
-        }
+        }*/
 
         curRtpPayloadLength = MediaManager.getInstance().getPriorityCodec().equals(MediaManager.AMR_WB)? 640 : 320;
     }
 
     public void stop() {
+        player.stop();
+        player.flush();
+
         recvBuffer.clear();
-        switch (MediaManager.getInstance().getPriorityCodec()) {
+        /*switch (MediaManager.getInstance().getPriorityCodec()) {
             case MediaManager.EVS:
                 EvsManager.getInstance().stopUdpReceiverTask();
                 break;
@@ -120,7 +126,7 @@ public class UdpReceiver extends TaskUnit {
                 break;
             default:
                 break;
-        }
+        }*/
 
         if (recvTaskExecutor != null) {
             recvTaskExecutor.shutdown();
@@ -145,8 +151,6 @@ public class UdpReceiver extends TaskUnit {
      */
     @Override
     public void run() {
-        //VoipClient voipClient = VoipClient.getInstance();
-
         try {
             AudioFrame audioFrame = audioBuffer.evolve();
             if (audioFrame == null) {
@@ -313,18 +317,10 @@ public class UdpReceiver extends TaskUnit {
 
             if (!isByteArrayFullOfZero(data)) {
                 if (!isDtmf) {
-                    /*if (VoipClient.getInstance().getSourceAudioFormat().getEncoding().toString().equals(
-                            AudioFormat.Encoding.PCM_SIGNED.toString())) {
-                        RecordManager pcmRecordManager = VoipClient.getInstance().getSourcePcmRecordManager();
-                        if (pcmRecordManager != null) {
-                            pcmRecordManager.addData(data);
-                            //pcmRecordManager.writeFileStream(data);
-                        }
-
-                        // Convert to big endian.
-                        if (VoipClient.getInstance().isSourceBigEndian()) {
-                            data = RtpUtil.changeByteOrder(data);
-                        }
+                    /*RecordManager pcmRecordManager = VoipClient.getInstance().getSourcePcmRecordManager();
+                    if (pcmRecordManager != null) {
+                        pcmRecordManager.addData(data);
+                        //pcmRecordManager.writeFileStream(data);
                     }*/
                 } else {
                     DtmfUnit dtmfUnit = new DtmfUnit(data);
@@ -336,7 +332,8 @@ public class UdpReceiver extends TaskUnit {
                 }
             }
 
-            player.write(data, 0, SoundHandler.BUFFER_SIZE);
+            Logger.d("DATA LEN : [%d]", data.length);
+            player.write(data, 0, 320);
         }
     }
 
