@@ -127,7 +127,7 @@ public class SipManager implements SipListener {
         }
     }
 
-    public void init() {
+    public boolean init() {
         SipFactory sipFactory = SipFactory.getInstance();
 
         try {
@@ -162,7 +162,7 @@ public class SipManager implements SipListener {
         } catch (PeerUnavailableException e) {
             e.printStackTrace();
             Logger.e("%s PeerUnavailableException %s (%s) (%s)", SipLogFormatter.getCallLogHeader(null, null, null, null), e, e.getCause(), e.getStackTrace());
-            return;
+            return false;
         }
 
         try {
@@ -196,7 +196,10 @@ public class SipManager implements SipListener {
             );
         } catch (Exception e) {
             Logger.e("SignalManager.Exception [%s]", e);
+            return false;
         }
+
+        return true;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -280,7 +283,6 @@ public class SipManager implements SipListener {
             } else if (Request.INVITE.equals(request.getMethod())) {
                 processInvite(requestEvent);
             } else if (Request.BYE.equals(request.getMethod())) {
-                Logger.d("BYE IS COMMING");
                 processBye(requestEvent);
             } else if (Request.CANCEL.equals(request.getMethod())) {
                 processCancel(requestEvent);
@@ -880,12 +882,12 @@ public class SipManager implements SipListener {
                         return;
                     }
                 }
-
-                if (CallManager.getInstance().getCallMapSize() == 0) {
-                    sessionId = NonceGenerator.createRandomNonce();
-                }
             }
             //
+
+            if (CallManager.getInstance().getCallMapSize() == 0) {
+                sessionId = NonceGenerator.createRandomNonce();
+            }
 
             String sipIp = parseSipIp(inviteFromHeader);
             int sipPort = parseSipPort(inviteFromHeader);
@@ -1006,18 +1008,11 @@ public class SipManager implements SipListener {
 
             if (isUseClient) {
                 callInfo.setIsCallRecv(true);
-
-                // 클라이언트 입장에서 자동 호 수락 옵션이 켜져있으면, 상대방 UA (프록시) 로 200 OK 를 바로 전송한다.
-                if (configManager.isCallAutoAccept()) {
-                    if (sendInviteOk(callId)) {
-                        AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processInvite(fromNo);
-                    }
-                } else {
-                    AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processInvite(null);
-                }
+                AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processInvite(callId, fromNo);
             }
         } catch (Exception e) {
             Logger.w("Fail to process INVITE.", e);
+            e.printStackTrace();
         }
     }
 
@@ -1117,6 +1112,7 @@ public class SipManager implements SipListener {
             }
         } catch (Exception e) {
             Logger.w("(%s) Fail to send 200 OK for the invite request.", callId, e);
+            e.printStackTrace();
         }
 
         return true;
@@ -1497,18 +1493,23 @@ public class SipManager implements SipListener {
                 callInfo.setIsCallStarted(false);
                 callInfo.setIsCallRecv(false);
 
-                Response response = messageFactory.createResponse(200, request);
-                sipProvider.sendResponse(response);
-                Logger.d("Send 200 OK for BYE: %s", response);
+                new Thread(() -> {
+                    try {
+                        Response response = messageFactory.createResponse(200, request);
+                        sipProvider.sendResponse(response);
+                        Logger.d("Send 200 OK for BYE: %s", response);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
 
                 if (isUseClient) {
                     AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processBye();
                 }
             }
-
-            Logger.d("@@@ 4");
         } catch (Exception e) {
             Logger.w("Fail to send the 200 OK response for the BYE request. (callId=%s)", callId, e);
+            e.printStackTrace();
         }
     }
 

@@ -32,6 +32,10 @@ public class AudioRecorder {
     ////////////////////////////////////////////////////////////////////////////////
 
     public void startRecording() {
+        if (audioRecord == null) {
+            return;
+        }
+
         if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
             return;
         }
@@ -40,6 +44,10 @@ public class AudioRecorder {
     }
 
     public void stopRecording() {
+        if (audioRecord == null) {
+            return;
+        }
+
         if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_STOPPED) {
             return;
         }
@@ -52,6 +60,10 @@ public class AudioRecorder {
     ////////////////////////////////////////////////////////////////////////////////
 
     public byte[] read() {
+        if (audioRecord == null) {
+            return null;
+        }
+
         if (audioRecord.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
             return null;
         }

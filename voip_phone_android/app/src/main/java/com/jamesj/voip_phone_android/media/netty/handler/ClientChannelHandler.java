@@ -90,7 +90,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<DatagramPa
 
                 // 3) Write the audio data to the speaker
                 if (payload.length > 0) {
-                    // TODO
                     AudioFrame audioFrame = new AudioFrame(rtpPacket.getPayloadType() == DtmfUnit.DTMF_TYPE);
                     audioFrame.setData(payload, true);
                     SoundHandler.getInstance().getSpeakerBuffer().offer(audioFrame);

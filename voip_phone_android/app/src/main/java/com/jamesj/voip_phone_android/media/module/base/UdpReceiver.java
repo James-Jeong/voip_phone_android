@@ -54,7 +54,7 @@ public class UdpReceiver extends TaskUnit {
 
         player = new AudioTrack.Builder()
                 .setAudioAttributes(new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
                         .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                         .build())
                 .setAudioFormat(new AudioFormat.Builder()
@@ -73,7 +73,7 @@ public class UdpReceiver extends TaskUnit {
 
             try {
                 RecvTask recvTask = new RecvTask(
-                        20
+                        1
                         //MediaManager.getInstance().getPriorityCodec().equals(MediaManager.AMR_WB)? 40 : 20
                 );
 
@@ -112,6 +112,7 @@ public class UdpReceiver extends TaskUnit {
     public void stop() {
         player.stop();
         player.flush();
+        player.release();
 
         recvBuffer.clear();
         /*switch (MediaManager.getInstance().getPriorityCodec()) {
@@ -332,7 +333,7 @@ public class UdpReceiver extends TaskUnit {
                 }
             }
 
-            Logger.d("DATA LEN : [%d]", data.length);
+            //Logger.d("DATA LEN : [%d]", data.length);
             player.write(data, 0, 320);
         }
     }
