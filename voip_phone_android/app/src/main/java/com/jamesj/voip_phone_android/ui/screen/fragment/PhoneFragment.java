@@ -222,6 +222,8 @@ public class PhoneFragment extends Fragment {
         if (sipManager.init()) {
             Toast.makeText(getContext(), "[ON]", Toast.LENGTH_SHORT).show();
         } else {
+            Toast.makeText(getContext(), "[FAIL TO OPEN SIP STACK]", Toast.LENGTH_SHORT).show();
+            sipManager = null;
             return;
         }
 
@@ -236,16 +238,16 @@ public class PhoneFragment extends Fragment {
                 proxyHostNameInputLayout.setEnabled(true);
                 //proxyHostNameInputLayout.setBackgroundColor(Color.WHITE);
                 enableButton(registerButton);
-            }
+            } else {
+                enableButton(callButton);
+                if (optionFragment.isDtmf()) {
+                    enableDtmf();
+                }
+                disableButton(byeButton);
 
-            enableButton(callButton);
-            if (optionFragment.isDtmf()) {
-                enableDtmf();
+                remoteHostNameInputLayout.setEnabled(true);
+                //remoteHostNameInputLayout.setBackgroundColor(Color.WHITE);
             }
-            disableButton(byeButton);
-
-            remoteHostNameInputLayout.setEnabled(true);
-            //remoteHostNameInputLayout.setBackgroundColor(Color.WHITE);
         }
 
         if (optionFragment != null) {
@@ -313,6 +315,9 @@ public class PhoneFragment extends Fragment {
 
     public void registerButtonClicked(View view) {
         Toast.makeText(getContext(), "Register to [" + proxyHostNameEditText.getText() + "]", Toast.LENGTH_SHORT).show();
+
+        ConfigManager configManager = AppInstance.getInstance().getConfigManager();
+        sipManager.sendRegister(configManager.getToIp(), configManager.getToPort(), false, null);
     }
 
     public void callButtonClicked(View view) {
@@ -493,6 +498,19 @@ public class PhoneFragment extends Fragment {
 
         sessionId = null;
         callId = null;
+    }
+
+    public void processRegister() {
+        Handler processRegisterHandler = new Handler(Looper.getMainLooper());
+        processRegisterHandler.postDelayed(() -> {
+            enableButton(callButton);
+            if (optionFragment.isDtmf()) {
+                enableDtmf();
+            }
+            disableButton(byeButton);
+
+            remoteHostNameInputLayout.setEnabled(true);
+        }, 0);
     }
 
     ///////////////////////////////////////////////

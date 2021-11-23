@@ -94,14 +94,15 @@ public class SipManager implements SipListener {
 
     ////////////////////////////////////////////////////////////////////////////////
     // SIP Object Variables
-    private String toIp;
-    private int toPort;
+    private String proxyToIp;
+    private int proxyToPort;
 
     ////////////////////////////////////////////////////////////////////////////////
     // SIP Register Variables
     private final String md5PassWd = "1234";
     private String userNonce = null;
     private String sessionId;
+    private String proxyName = null;
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -137,8 +138,8 @@ public class SipManager implements SipListener {
             hostPort = configManager.getFromPort();
 
             defaultRegisterExpires = configManager.getDefaultRegisterExpires();
-            toIp = configManager.getToIp();
-            toPort = configManager.getToPort();
+            proxyToIp = configManager.getToIp();
+            proxyToPort = configManager.getToPort();
 
             //Date curTime = new Date();
             //SimpleDateFormat timeFormat = new SimpleDateFormat("yyyyMMddHH");
@@ -336,9 +337,9 @@ public class SipManager implements SipListener {
             case Response.UNAUTHORIZED:
                 Logger.d("Recv 401 Unauthorized. Authentication will be processed.");
                 if (requestMethodName.equals(Request.REGISTER)) {
-                    sendRegister(true, response);
+                    sendRegister(proxyToIp, proxyToPort, true, response);
                 } else {
-                    sendRegister(true, null);
+                    sendRegister(proxyToIp, proxyToPort, true, null);
                     callInfo.setIsInviteUnauthorized(true);
                 }
                 break;
@@ -425,19 +426,16 @@ public class SipManager implements SipListener {
      * @brief REGISTER Method 를 보내는 함수
      * 클라이언트만 사용하는 함수
      */
-    public void sendRegister (boolean isRecv401, Response response401) {
+    public void sendRegister (String toIp, int toPort, boolean isRecv401, Response response401) {
         try {
-            //String proxyHostName = VoipClient.getInstance().getProxyHostName();
-            String proxyHostName = "proxy";
-
             // Create SIP URI
-            SipURI sipUri = addressFactory.createSipURI(proxyHostName, toIp);
+            SipURI sipUri = addressFactory.createSipURI(proxyName, toIp);
             sipUri.setHost(toIp);
             sipUri.setPort(toPort);
             sipUri.setLrParam();
 
             // Add Route Header
-            Address addressTo = addressFactory.createAddress(proxyHostName, sipUri);
+            Address addressTo = addressFactory.createAddress(proxyName, sipUri);
             // Create the request URI for the SIP message
             URI requestURI = addressTo.getURI();
 
@@ -539,6 +537,9 @@ public class SipManager implements SipListener {
                     e.printStackTrace();
                 }
             }).start();
+
+            proxyToIp = toIp;
+            proxyToPort = toPort;
         }
         catch ( Exception e ) {
             Logger.w("REGISTER Request sent failed.", e);
@@ -1672,17 +1673,13 @@ public class SipManager implements SipListener {
                     FromHeader inviteFromHeader = (FromHeader) response.getHeader(FromHeader.NAME);
                     String fromNo = inviteFromHeader.getAddress().getDisplayName();
 
-                    // TODO
-                    /*if (FrameManager.getInstance().processRegisterToFrame(fromNo)) {
-                        Logger.d("(%s) Success to process the register to [%s] frame.", ServiceManager.CLIENT_FRAME_NAME, callId);
-                    }*/
-                    //
-
+                    AppInstance.getInstance().getMasterFragmentActivity().getPhoneFragment().processRegister();
                     Logger.d("(%s) Success to register. (mdn=%s)", callId, fromNo);
                 }
             }
         } catch (Exception e) {
             Logger.w("(%s) Fail to process the 200 OK response for the %s request", callId, methodName, e);
+            e.printStackTrace();
         }
     }
 
@@ -1703,4 +1700,11 @@ public class SipManager implements SipListener {
         return null;
     }
 
+    public String getProxyName() {
+        return proxyName;
+    }
+
+    public void setProxyName(String proxyName) {
+        this.proxyName = proxyName;
+    }
 }

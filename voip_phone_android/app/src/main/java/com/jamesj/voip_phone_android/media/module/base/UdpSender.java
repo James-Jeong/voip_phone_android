@@ -91,7 +91,7 @@ public class UdpSender extends TaskUnit {
                 audioRecorder.startRecording();
             }
 
-            /*switch (MediaManager.getInstance().getPriorityCodec()) {
+            switch (MediaManager.getInstance().getPriorityCodec()) {
                 case MediaManager.EVS:
                     EvsManager.getInstance().startUdpSenderTask(sendBuffer);
                     break;
@@ -103,7 +103,7 @@ public class UdpSender extends TaskUnit {
                     break;
                 default:
                     break;
-            }*/
+            }
         } catch (Exception e) {
             Logger.w("UdpSender.start.Exception", e);
             e.printStackTrace();
@@ -117,7 +117,7 @@ public class UdpSender extends TaskUnit {
         }
 
         sendBuffer.clear();
-        /*switch (MediaManager.getInstance().getPriorityCodec()) {
+        switch (MediaManager.getInstance().getPriorityCodec()) {
             case MediaManager.EVS:
                 EvsManager.getInstance().stopUdpSenderTask();
                 break;
@@ -129,7 +129,7 @@ public class UdpSender extends TaskUnit {
                 break;
             default:
                 break;
-        }*/
+        }
 
         if (executor != null) {
             executor.shutdown();

@@ -92,7 +92,7 @@ public class UdpReceiver extends TaskUnit {
             Logger.d("UdpReceiver RecvTask is added.");
         }
 
-        /*switch (MediaManager.getInstance().getPriorityCodec()) {
+        switch (MediaManager.getInstance().getPriorityCodec()) {
             case MediaManager.EVS:
                 EvsManager.getInstance().startUdpReceiverTask(recvBuffer);
                 break;
@@ -104,7 +104,7 @@ public class UdpReceiver extends TaskUnit {
                 break;
             default:
                 break;
-        }*/
+        }
 
         curRtpPayloadLength = MediaManager.getInstance().getPriorityCodec().equals(MediaManager.AMR_WB)? 640 : 320;
     }
@@ -115,7 +115,7 @@ public class UdpReceiver extends TaskUnit {
         player.release();
 
         recvBuffer.clear();
-        /*switch (MediaManager.getInstance().getPriorityCodec()) {
+        switch (MediaManager.getInstance().getPriorityCodec()) {
             case MediaManager.EVS:
                 EvsManager.getInstance().stopUdpReceiverTask();
                 break;
@@ -127,7 +127,7 @@ public class UdpReceiver extends TaskUnit {
                 break;
             default:
                 break;
-        }*/
+        }
 
         if (recvTaskExecutor != null) {
             recvTaskExecutor.shutdown();

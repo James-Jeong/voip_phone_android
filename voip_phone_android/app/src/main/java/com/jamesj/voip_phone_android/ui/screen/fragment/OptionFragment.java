@@ -25,6 +25,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.jamesj.voip_phone_android.R;
 import com.jamesj.voip_phone_android.config.ConfigManager;
 import com.jamesj.voip_phone_android.media.MediaManager;
+import com.jamesj.voip_phone_android.media.codec.amr.AmrManager;
+import com.jamesj.voip_phone_android.media.codec.evs.EvsManager;
 import com.jamesj.voip_phone_android.media.module.ResourceManager;
 import com.jamesj.voip_phone_android.service.AppInstance;
 import com.jamesj.voip_phone_android.ui.screen.activity.MasterFragmentActivity;
@@ -509,6 +511,26 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
         String selectedCodecName = AUDIO_CODECS[newVal];
 
+        // TODO : Load EVS & AMR Libraries
+        // SERVICE
+        if (selectedCodecName.equals(MediaManager.EVS)) {
+            if (EvsManager.getInstance().init()) {
+                Toast.makeText(getContext(), "[EVS LIBRARY LOADED]", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "[EVS LIBRARY NOT LOADED]", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else if (selectedCodecName.equals(MediaManager.AMR_NB)
+                || selectedCodecName.equals(MediaManager.AMR_WB)) {
+            if (AmrManager.getInstance().init()) {
+                Toast.makeText(getContext(), "[AMR LIBRARY LOADED]", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "[AMR LIBRARY NOT LOADED]", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        //
+
         selectedAudioCodec.setText(selectedCodecName);
 
         ConfigManager configManager = AppInstance.getInstance().getConfigManager();
@@ -516,7 +538,6 @@ public class OptionFragment extends Fragment implements NumberPicker.OnValueChan
         configManager.setIniValue(ConfigManager.SECTION_MEDIA, ConfigManager.FIELD_PRIORITY_CODEC, selectedCodecName);
 
         MediaManager.getInstance().setPriorityCodec(selectedCodecName);
-
 
         Logger.d("AUDIO CODEC [%s] is selected. (prev=%s)", AUDIO_CODECS[newVal], AUDIO_CODECS[oldVal] );
     }

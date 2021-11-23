@@ -29,7 +29,7 @@ public class AmrManager {
         return amrManager;
     }
 
-    public void init() {
+    public boolean init() {
         /*String curUserDir = System.getProperty("user.dir");
         if (curUserDir.endsWith("bin")) {
             curUserDir = curUserDir.substring(0, curUserDir.lastIndexOf("bin") - 1);
@@ -62,13 +62,14 @@ public class AmrManager {
             //FrameManager.getInstance().popUpWarnMsgToFrame(resultMsg);
             Logger.d("Priority audio codec option is changed. (before=[%s], after=[%s])", configManager.getPriorityAudioCodec(), audioCodecStrArray[0]);
 
-            return;
+            return false;
         }
 
         /*FrameManager.getInstance().popUpInfoMsgToFrame(
                 //"Success to load the amr library. (path=" + curUserDir + ")"
                 "Success to load the amr library."
         );*/
+        return true;
     }
 
     ////////////////////////////////////////////////////////////////////////////////

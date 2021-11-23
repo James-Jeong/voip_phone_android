@@ -124,18 +124,6 @@ public class MasterFragmentActivity extends FragmentActivity {
             }
         });
 
-        // TODO : Load EVS & AMR Libraries
-        // SERVICE
-        /*if (MediaManager.getInstance().getPriorityCodec().equals(MediaManager.EVS)) {
-            EvsManager.getInstance().init();
-        }
-
-        if (MediaManager.getInstance().getPriorityCodec().equals(MediaManager.AMR_NB)
-                || MediaManager.getInstance().getPriorityCodec().equals(MediaManager.AMR_WB)) {
-            AmrManager.getInstance().init();
-        }*/
-        //
-
         AppInstance.getInstance().setMasterFragmentActivity(this);
     }
 
